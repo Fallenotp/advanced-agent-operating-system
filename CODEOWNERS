@@ -1,0 +1,11 @@
+# CODEOWNERS — who must review changes to the gate itself.
+#
+# The checks are the judge. Only the owner can change them. A change
+# that edits its own judge is a broken check, so changes to the gate,
+# its config, and the CI workflow need the owner's review.
+# This file only takes effect once the branch ruleset requires review
+# on main — see docs/setup-checklist.md. Without the ruleset, this file
+# is a note, not a lock.
+/checks/ @Fallenotp
+/approvals.yaml @Fallenotp
+/.github/workflows/ @Fallenotp

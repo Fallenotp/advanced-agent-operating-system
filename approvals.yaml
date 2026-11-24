@@ -1,0 +1,20 @@
+# approvals.yaml — Level 5 approvals. One entry per approved action.
+#
+# A Level 5 action (the agent acts on its own and tells the owner after)
+# is allowed only when an entry here covers it. An approval that lives
+# only in chat is not an approval the gate can see.
+#
+# Fields per entry:
+#   task-id:      slug for the task, e.g. weekly-watcher
+#   action-class: one of the fixed list — report-only, update-wiki,
+#                 update-docs, send-summary, file-issue, update-schedule
+#   scope:        plain words for what the approval covers, or "*"
+#   approved-by:  a named human, never the agent that will act
+#   date:         YYYY-MM-DD (must not be in the future)
+#   expires:      YYYY-MM-DD (the approval stops working after this date)
+#
+# This file is protected by CODEOWNERS (only the owner can change it)
+# and a branch ruleset. An agent that can write to this file can approve
+# itself — that is why the protection is load-bearing, not decoration.
+# check_level5.py also verifies the approver differs from the actor.
+approvals: []

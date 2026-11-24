@@ -1,0 +1,5 @@
+# Test residue: run_corpus.py writes case inputs here fresh each run and
+# removes them when the run passes. Never commit leftovers from a failed run.
+checks/tests/.tmp/
+__pycache__/
+*.pyc
