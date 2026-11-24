@@ -1,0 +1,189 @@
+name: checks
+
+# Runs the repo's own Step 3 checkers on every pull request, plus a push
+# to main as a backstop. If any check fails, the merge is blocked — but
+# only once the branch ruleset requires this job as a status check (see
+# docs/setup-checklist.md). Without that ruleset, a red run is advice.
+# Enforcement is lint checks / CI-style checks, never agent-side hooks.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      # Pinned by commit SHA (not a floating tag) so a compromised or
+      # moved tag cannot change what runs. SHAs verified with
+      # `git ls-remote https://github.com/actions/checkout` and the same
+      # for setup-python.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile all Python files
+        run: python3 -m py_compile skills/*/scripts/*.py checks/*.py checks/tests/*.py
+
+      - name: Bash syntax check for shell files
+        run: |
+          bash -n skills/step-3-never-take-first-look/scripts/run_checks.sh
+          bash -n checks/gate.sh
+
+      - name: YAML parse for every YAML file
+        run: |
+          # The workflow file itself uses full YAML (block scalars, flow
+          # lists), which the checkers' no-dependency subset reader does
+          # not support — so this step uses real PyYAML. The glob does
+          # not descend into .github on its own, so that path is listed
+          # explicitly.
+          python3 -m pip install --quiet pyyaml
+          python3 -c "import glob, yaml; files = glob.glob('**/*.yaml', recursive=True) + glob.glob('**/*.yml', recursive=True) + glob.glob('.github/**/*.yml', recursive=True); [yaml.safe_load(open(f)) for f in files]; print('YAML OK:', len(files), 'files')"
+
+      - name: Step 2 checker — template must pass, risky line must flag
+        run: |
+          # check_tools is WARN-tier: it always exits 0 on a completed
+          # scan, so a flag is read from the output, not the exit code.
+          python3 skills/step-2-match-oversight-to-stakes/scripts/check_tools.py templates/job-description-template.md
+          printf '%s\n' "the agent may send emails to clients and deploy to production" > /tmp/risky.txt
+          if python3 skills/step-2-match-oversight-to-stakes/scripts/check_tools.py /tmp/risky.txt | grep -q "WARN:"; then
+            echo "risky line flagged as expected"
+          else
+            echo "FAIL: risky line was not flagged"; exit 1
+          fi
+
+      - name: Step 1 checker — blank template must fail, filled example must pass
+        run: |
+          if python3 skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py templates/job-description-template.md; then
+            echo "FAIL: blank template passed"; exit 1
+          fi
+          cat > /tmp/filled-job.md <<'EOF'
+          # Agent Job Description — Review responder
+
+          ## 1. Role
+          Review responder for the business.
+
+          ## 2. Mission
+          Draft replies to new reviews within one day.
+
+          ## 3. Owner
+          The business owner checks every draft and owns the outcome.
+
+          ## 4. Responsibilities
+          Draft replies to new reviews, three times a week.
+
+          ## 5. Steps
+          1. Read the review. 2. Draft a reply in the business voice. 3. Hand the draft to the owner.
+
+          ## 6. Deliverable
+          A draft reply, with the owner's approval before anything goes out.
+
+          ## 7. Sources of truth
+          The review itself and the business services page.
+
+          ## 8. Tools
+          Can read reviews. Can never touch publishing or the live site.
+
+          ## 9. Green / amber / red
+          Green: drafting. Amber: anything public — owner approves first. Red: publishing.
+
+          ## 10. Schedule
+          Runs Monday, Wednesday, Friday. Reports drafts to the owner the same day.
+
+          ## 11. Correction log
+          Log location: docs/step-4-corrections-log-example.md
+          EOF
+          python3 skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py /tmp/filled-job.md
+
+      - name: Step 3 run_checks — passing fixture must pass
+        run: |
+          mkdir -p /tmp/fixture && cd /tmp/fixture
+          printf '%s' '{"scripts": {"build": "echo build ok", "lint": "echo lint ok", "typecheck": "echo typecheck ok", "test": "echo 3 passed"}}' > package.json
+          bash "$GITHUB_WORKSPACE/skills/step-3-never-take-first-look/scripts/run_checks.sh"
+
+      - name: Step 3 run_checks — a test script that is just 'true' warns, not passes
+        run: |
+          mkdir -p /tmp/stub && cd /tmp/stub
+          printf '%s' '{"scripts": {"test": "true"}}' > package.json
+          out=$(bash "$GITHUB_WORKSPACE/skills/step-3-never-take-first-look/scripts/run_checks.sh")
+          echo "$out" | grep -q "WARN" || { echo "FAIL: stub test script did not warn"; exit 1; }
+
+      - name: Step 3 run_checks — docs-only directory passes with a note
+        run: |
+          mkdir -p /tmp/empty && cd /tmp/empty
+          out=$(bash "$GITHUB_WORKSPACE/skills/step-3-never-take-first-look/scripts/run_checks.sh")
+          echo "$out" | grep -q "no code checks apply" || { echo "FAIL: docs-only directory did not pass with a note"; exit 1; }
+
+      - name: Step 3 run_checks — package.json with no scripts must fail
+        run: |
+          mkdir -p /tmp/noscripts && cd /tmp/noscripts
+          printf '%s' '{"name": "x"}' > package.json
+          if bash "$GITHUB_WORKSPACE/skills/step-3-never-take-first-look/scripts/run_checks.sh"; then
+            echo "FAIL: package with no scripts claimed success"; exit 1
+          fi
+
+      - name: Step 5 watcher — missing due date warns, does not fail the run
+        run: |
+          printf '%s' '[{"title": "No due date"}]' > /tmp/tasks-bad.json
+          out=$(python3 skills/step-5-proactive-not-reactive/scripts/watcher_check.py /tmp/tasks-bad.json)
+          echo "$out" | grep -q "WARN" || { echo "FAIL: task missing a due date was not listed as a warning"; exit 1; }
+          printf '%s' '[{"title": "Pay invoice", "due": "2026-11-01", "owner": ""}]' > /tmp/tasks.json
+          python3 skills/step-5-proactive-not-reactive/scripts/watcher_check.py /tmp/tasks.json --today 2026-11-23
+
+      - name: Step 4 log — repeat problem-id prints PATTERN
+        run: |
+          rm -f /tmp/corrections-test.md
+          python3 skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py --log /tmp/corrections-test.md --problem-id video-timing-mismatch --system test --task test --expected a --actual b --severity low
+          python3 skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py --log /tmp/corrections-test.md --problem-id video-timing-mismatch --system test --task test --expected a --actual b --severity low | grep -q "PATTERN" || { echo "FAIL: second identical problem-id did not print PATTERN"; exit 1; }
+
+      - name: Step 3 verify_handoff — good handoff passes, bad handoff fails
+        run: |
+          cat > /tmp/handoff-good.md <<'EOF'
+          ## Evidence
+          Ran check_tools.py on the template: PASS, exit 0. Ran watcher_check.py on one overdue task: OVERDUE listed it.
+          ## Not checked
+          GitHub rendering — nothing has been pushed yet, so it could not be checked.
+          Tries used: 1
+          EOF
+          python3 skills/step-3-never-take-first-look/scripts/verify_handoff.py /tmp/handoff-good.md
+          printf '%s\n' "all done" > /tmp/handoff-bad.md
+          if python3 skills/step-3-never-take-first-look/scripts/verify_handoff.py /tmp/handoff-bad.md; then
+            echo "FAIL: bad handoff passed"; exit 1
+          fi
+
+      - name: Step 3 verify_handoff — vacuous phrasings must fail
+        run: |
+          # "Not checked: nothing" as a line under a heading must fail:
+          # the label is stripped before judging the content.
+          cat > /tmp/handoff-vacuous-a.md <<'EOF'
+          ## Evidence
+          Ran check_tools.py on the template: PASS, exit 0.
+          ## Not checked
+          Not checked: nothing
+          Tries used: 1
+          EOF
+          if python3 skills/step-3-never-take-first-look/scripts/verify_handoff.py /tmp/handoff-vacuous-a.md; then
+            echo "FAIL: 'Not checked: nothing' passed"; exit 1
+          fi
+          # Vacuous "Evidence:" line must fail even when a substantive
+          # line from the next section follows it: collection stops at
+          # the next known label, it does not borrow the next section.
+          cat > /tmp/handoff-vacuous-b.md <<'EOF'
+          ## Evidence
+          Evidence: The evidence is that it worked.
+          Not checked: did not test the PDF export
+          Tries used: 1
+          EOF
+          if python3 skills/step-3-never-take-first-look/scripts/verify_handoff.py /tmp/handoff-vacuous-b.md; then
+            echo "FAIL: vacuous Evidence line passed"; exit 1
+          fi
+
+      - name: Negative corpus — every checker against good and cheating inputs
+        run: python3 checks/tests/run_corpus.py
+
+      - name: Gate self-test — overrides, tripwires, warn-only, zero checks
+        run: bash checks/gate.sh --self-test
+
+      - name: Gate on the repo itself — docs-only, must pass with a note
+        run: bash checks/gate.sh --target .
