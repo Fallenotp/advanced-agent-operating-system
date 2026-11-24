@@ -1,0 +1,28 @@
+# overrides.yaml — human overrides for the gate. One entry per override.
+#
+# When a check is wrong, a human says so in writing instead of everyone
+# learning to bypass the gate. An override is itself a change that needs
+# a human: this file lives in checks/, protected by CODEOWNERS.
+#
+# Fields per entry:
+#   check:       the check name, exactly as the gate prints it
+#   file:        the file the override applies to
+#   reason:      plain English — what the human actually checked
+#   reviewed-by: a named human, never the agent
+#   date:        YYYY-MM-DD
+#   expires:     YYYY-MM-DD (default 7 days after date). A permanent
+#                override is a smell — it means the check is wrong and
+#                should be fixed (Step 4). An expired override FAILS.
+#
+# How the gate uses it: the runner reads this file automatically and
+# prints "OVERRIDDEN: <check> on <file> — <reason> (by <name>, expires
+# <date>)" so the override is visible in the CI log and in the handoff.
+# An override naming a check or file not in the run FAILS. More than 2
+# overrides in one run FAILS with "the check is wrong, fix the check".
+# An override used twice for the same check is a pattern: rewrite the
+# check.
+#
+# Emergency path: if CI itself is down, the owner merges with a recorded
+# override entry whose reason is "CI unavailable, checks run locally,
+# output attached" — still a written record, still reviewed.
+overrides: []
