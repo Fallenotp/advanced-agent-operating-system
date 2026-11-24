@@ -1,0 +1,32 @@
+# checks/manifest.yaml — which checks apply, and how strict each one is.
+#
+# This file is the gate's own configuration. It lives in checks/, so
+# only the owner can change it (CODEOWNERS + branch ruleset). A change
+# that edits its own judge is a broken check.
+#
+# code_checks.apply_when_any_file: the code checks (run_checks.sh) apply
+# only when one of these files exists in the target directory. A docs-only
+# repo has neither, so code checks PASS with a note ("no code checks
+# apply") instead of failing for having no tests. "Nothing applicable"
+# and "nothing verified" are different states.
+#
+# tiers: block = a failure fails the gate. warn = a failure prints a
+# warning and the gate still passes. The tier is a decision about the
+# check, written down here — not something the checker invents at run
+# time. Step 4 starts as warn and is promoted to block only after clean
+# runs; a new or changed check runs as warn for two weeks first.
+code_checks:
+  applies_when_any_file:
+    - package.json
+    - pyproject.toml
+
+tiers:
+  step1_job_description: block
+  step2_prose_scan: warn
+  step2_allowlist: block
+  step3_verify_handoff: block
+  step3_run_checks: block
+  step4_corrections: warn
+  step5_watcher: warn
+  step5_level5: block
+  step3_review: block
