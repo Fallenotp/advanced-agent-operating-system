@@ -1,0 +1,49 @@
+name: Bug report
+description: Report broken behavior, regressions, crashes, or reliability issues.
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What went wrong, in one or two sentences.
+      placeholder: The gate passed a brief with no tools section.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The exact commands or inputs that show the problem.
+      placeholder: |
+        1. Copy templates/job-description-template.md to /tmp/job.md
+        2. Run python3 skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py /tmp/job.md
+        3. It exits 0, but the brief is blank.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should have happened
+      description: What the check, the skill, or the doc should have done instead.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Paste the real output, not a summary. For a doc problem, quote the source you opened.
+      placeholder: |
+        $ python3 skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py /tmp/job.md
+        PASS: ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: The commit or release date you ran this against.
+      placeholder: main @ 2026-11-25
+    validations:
+      required: false

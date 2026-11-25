@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Suggest an improvement or new capability
+    url: https://github.com/Fallenotp/advanced-agent-operating-system/discussions
+    about: Feature requests and ideas go in Discussions, not in issues.
+  - name: Ask a question
+    url: https://github.com/Fallenotp/advanced-agent-operating-system/discussions
+    about: Questions about the five steps go in Discussions.

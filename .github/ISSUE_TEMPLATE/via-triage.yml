@@ -1,0 +1,37 @@
+name: Agent-investigated report
+description: Filed after an agent investigated the repo and found the problem. For hand-written reports use the bug report template instead.
+title: "[Triage]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What the agent found, in one or two sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: investigation
+    attributes:
+      label: What the agent checked
+      description: The files read, the commands run, and what each one showed. A finding with no evidence is a guess.
+      placeholder: |
+        Read checks/check_level5.py, ran it against an action with a wider scope than the approval.
+        It exited 0. It should have failed.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Paste the real output, not a summary.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: The commit or release date this was checked against.
+      placeholder: main @ 2026-11-25
+    validations:
+      required: false
