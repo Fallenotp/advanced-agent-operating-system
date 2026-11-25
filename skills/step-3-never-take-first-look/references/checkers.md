@@ -4,7 +4,7 @@ Pick the checker by output type. The blanket rule in `../SKILL.md` is the gate; 
 
 ## Visual — website, deck, card, PDF
 
-1. Look at the finished thing, not the code. Screenshot every page, every slide, every card — front and back if there are two sides.
+1. Look at the finished thing, not the code. Screenshot every page, every slide, every card — front and back if there are two sides. Render every image to pixels and look at it as a picture. Reading an image file's source code — SVG or XML — is not a visual check; a picture you only read as code is not a verified picture.
 2. Read every word on every screenshot. Check spelling against the source copy. Check nothing is cut off at the edge, nothing overlaps anything else, and text is big enough to read.
 3. Check contrast: dark text on a light background, or light text on a dark background — never light grey on white, never dark on dark.
 4. Check positioning: headings line up, spacing is even, nothing is pushed off the screen, nothing scrolls sideways.
