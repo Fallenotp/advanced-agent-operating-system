@@ -1,6 +1,6 @@
 # Lint checks that hold
 
-This page is the lessons-learned record for the checks in this repo: what they are, what went wrong building them, and how to think through a new one. It is written in plain words, clear enough for a 12-year-old to follow. Two numbers were updated when this page moved into the repo: the test set is 64 cases, not 61, and a pattern row's fix counts when the file changed on or after the row's date, not only after it. Everything else is word for word from the draft.
+This page is the lessons-learned record for the checks in this repo: what they are, what went wrong building them, and how to think through a new one. It is written in plain words, clear enough for a 12-year-old to follow. Two numbers were updated when this page moved into the repo: the test set is 67 cases, not 61, and a pattern row's fix counts when the file changed on or after the row's date, not only after it. Everything else is word for word from the draft.
 
 A lint check is a small script that looks at a file and answers one question. It exits 0 for pass, 1 for fail, 2 for you ran it wrong. That is all it does.
 
@@ -40,7 +40,7 @@ Step 4 has two parts. log_correction.py appends a row to the corrections log and
 
 Step 5 has two checks. watcher_check.py reads the task list and reports overdue tasks and tasks due in the next three days with no owner. One bad row no longer hides the rest. It reads lenient dates, like 23/11/2026 and 2026-2-3, and treats TBD as no owner. It only warns, never blocks a merge. The second, check_level5.py, checks that every Level 5 action has an approval record in approvals.yaml. The action file is JSON, and the action class must be one of six fixed kinds: report-only, update-wiki, update-docs, send-summary, file-issue, update-schedule. The approver must be a named human, not the agent that did the action, and the approval must not be expired. An approval in chat alone does not count.
 
-One runner ties them together. checks/gate.sh runs every checker that has an input and prints one PASS or FAIL line per check. It reads which checks block and which only warn from checks/manifest.yaml. If zero checks ran, it fails. It reads overrides from checks/overrides.yaml and prints them, so an exception is visible in the log. The runner has its own self-test, bash checks/gate.sh --self-test, which runs the whole test set plus six scenarios. The test set lives in checks/tests/, 64 cases of good work the checks must pass and cheating work they must fail. It ran 64 passed, 0 failed, on 2026-11-25.
+One runner ties them together. checks/gate.sh runs every checker that has an input and prints one PASS or FAIL line per check. It reads which checks block and which only warn from checks/manifest.yaml. If zero checks ran, it fails. It reads overrides from checks/overrides.yaml and prints them, so an exception is visible in the log. The runner has its own self-test, bash checks/gate.sh --self-test, which runs the whole test set plus six scenarios. The test set lives in checks/tests/, 67 cases of good work the checks must pass and cheating work they must fail. It ran 67 passed, 0 failed, on 2026-11-25.
 
 ### Why bother
 
@@ -116,7 +116,7 @@ Park and Choi, https://arxiv.org/abs/2607.25152, opened 2026-11-24. 54 cycles, 5
 
 The video, https://www.youtube.com/watch?v=42Y6z9KKRKc. Transcript read live 2026-11-23.
 
-The examples in this section were run against the actual scripts in this repo on 2026-11-24, after the checks were rewritten. The test set that proves them lives in checks/tests/, 64 cases, all passing.
+The examples in this section were run against the actual scripts in this repo on 2026-11-24, after the checks were rewritten. The test set that proves them lives in checks/tests/, 67 cases, all passing.
 
 ## What we got wrong, and what we changed
 
