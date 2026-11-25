@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check a job description file for the required Step 1 fields.
 
-Usage: python3 check_job_description.py <job-description-file> [--tier block|warn]
+Usage: python3 check_job_description.py <job-description-file> [--tier=block|warn]
 Parses sections, not prose: each required field must appear as a heading
 ("## 1. Role", "## Role") or a "Field:" line, WITH real content under it
 (10+ characters of text once placeholders are removed). A heading with
@@ -123,10 +123,10 @@ def main() -> int:
         if a.startswith("--tier="):
             tier = a.split("=", 1)[1]
     if tier not in ("block", "warn"):
-        print("Usage: python3 check_job_description.py <job-description-file> [--tier block|warn]")
+        print("Usage: python3 check_job_description.py <job-description-file> [--tier=block|warn]")
         return 2
     if len(args) != 1:
-        print("Usage: python3 check_job_description.py <job-description-file> [--tier block|warn]")
+        print("Usage: python3 check_job_description.py <job-description-file> [--tier=block|warn]")
         return 2
     try:
         text = open(args[0], encoding="utf-8").read()
