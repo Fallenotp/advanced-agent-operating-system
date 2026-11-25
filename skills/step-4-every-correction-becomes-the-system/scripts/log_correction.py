@@ -2,9 +2,9 @@
 """Append a correction entry to the corrections log and count repeats.
 
 Usage:
-  python3 log_correction.py --system SYSTEM --task TASK \
-      --problem-id PROBLEM-ID --expected EXPECTED --actual ACTUAL \
-      --severity low|medium|high --log PATH
+  python3 log_correction.py --system=SYSTEM --task=TASK \
+      --problem-id=PROBLEM-ID --expected=EXPECTED --actual=ACTUAL \
+      --severity=low|medium|high --log=PATH
 
 Appends one markdown table row to the log file at PATH. Counts prior
 rows with the SAME problem-id (exact match on the Problem ID column),
