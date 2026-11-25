@@ -21,7 +21,7 @@ Never fix the same problem more than twice. Once can be a one-off. The second ti
 
 ## The loop
 
-1. **Log it.** Triggered by an error, a failed check, or the owner spotting a mistake. Each entry records: date, a problem-id slug, which system/agent, what task, expected vs actual, inputs/files/screenshot, and how bad it was. Log location: `../../docs/step-4-corrections-log-example.md`. Run `scripts/log_correction.py` to append an entry and count repeats by problem-id.
+1. **Log it.** Triggered by an error, a failed check, or the owner spotting a mistake. Each entry records: date, a problem-id slug, which system/agent, what task, expected vs actual, inputs/files/screenshot, and how bad it was. Log location: `../../docs/user/step-4-every-correction-becomes-the-system.md`. Run `scripts/log_correction.py` to append an entry and count repeats by problem-id.
 2. **Find the pattern.** Twice is a pattern. Compare expected vs actual and trace back to the missing or unclear instruction. One failure is a data point; the same failure twice is a system gap.
 3. **Rewrite the system, not the model.** What gets rewritten is the skill file, the job description, the checklist, or an example — usually a short "gotcha" (the trap, and what to do instead). The agent does not retrain itself. It "learns" by updating its written instructions.
 4. **Ground the fix.** A fix should be proposed by thinking, then grounded by research, documentation, a working example, or a test. Thinking alone can invent a plausible-but-wrong fix.
@@ -59,7 +59,7 @@ Underneath all of it: a named human owner for every automation. List every autom
 
 ## Practical setup for a solo user
 
-- One sheet as the run log (`../../docs/step-4-corrections-log-example.md`) plus the owner list.
+- One sheet as the run log (`../../docs/user/step-4-every-correction-becomes-the-system.md`) plus the owner list.
 - One skill per recurring job, with a Gotchas section.
 - After every fix: "Fix it, then add this to the skill so it never happens again."
 - A short weekly review — about 20 minutes — of the log: what repeated, what got fixed, what still needs the owner.
@@ -77,5 +77,5 @@ Underneath all of it: a named human owner for every automation. List every autom
 
 ## References
 
-- `../../docs/step-4-corrections-log-example.md` — the run log.
+- `../../docs/user/step-4-every-correction-becomes-the-system.md` — the run log.
 - Keep an owner and last-checked list — one line per automation: what it is, who owns it, and when it was last checked.
