@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Deterministic watcher check (Step 5 written rule, no agent judgement).
 
-Usage: python3 watcher_check.py <tasks.json> [--today YYYY-MM-DD]
+Usage: python3 watcher_check.py <tasks.json> [--today=YYYY-MM-DD]
 tasks.json is a list of tasks, each with "title", "due" (a date), and
 "owner" (a name, or "" / null when there is no owner).
 Prints: overdue tasks, tasks due in the next 3 days with no owner,
@@ -69,13 +69,23 @@ def _has_owner(task):
 
 def main() -> int:
     if len(sys.argv) < 2:
-        print("Usage: python3 watcher_check.py <tasks.json> [--today YYYY-MM-DD]")
+        print("Usage: python3 watcher_check.py <tasks.json> [--today=YYYY-MM-DD]")
         return 2
     today = datetime.date.today()
-    if len(sys.argv) > 3 and sys.argv[2] == "--today":
-        parsed = _parse_date(sys.argv[3])
+    # --today takes its date in = form (--today=2026-11-23); the space
+    # form (--today 2026-11-23) is also accepted for existing callers.
+    today_arg = None
+    for i, arg in enumerate(sys.argv[2:], 2):
+        if arg.startswith("--today="):
+            today_arg = arg.split("=", 1)[1]
+            break
+        if arg == "--today" and i + 1 < len(sys.argv):
+            today_arg = sys.argv[i + 1]
+            break
+    if today_arg is not None:
+        parsed = _parse_date(today_arg)
         if parsed is None:
-            print(f"FAIL: --today is not a readable date: {sys.argv[3]!r}")
+            print(f"FAIL: --today is not a readable date: {today_arg!r}")
             return 2
         today = parsed
     try:
