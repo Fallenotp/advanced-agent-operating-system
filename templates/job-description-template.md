@@ -88,7 +88,7 @@ Reports: [ ]
 
 ## 11. Correction log
 
-Where fixes go, so the same mistake is never fixed twice. See `../docs/step-4-corrections-log-example.md`.
+Where fixes go, so the same mistake is never fixed twice. See `../docs/user/step-4-every-correction-becomes-the-system.md`.
 
 Log location: [ ]
 
