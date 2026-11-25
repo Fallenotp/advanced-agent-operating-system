@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Helper for the gate: list the overrides in checks/overrides.yaml.
 
-Usage: python3 _override_check.py --overrides FILE list
+Usage: python3 _override_check.py --overrides=FILE list
 Prints one tab-separated line per override entry:
   check<TAB>file<TAB>reason<TAB>reviewed-by<TAB>date<TAB>expires
 A missing overrides file means "no overrides" (exit 0, no output).
@@ -17,10 +17,19 @@ from gate_yaml import load_file, YamlError  # noqa: E402
 
 
 def main() -> int:
-    if len(sys.argv) < 3 or sys.argv[1] != "--overrides" or sys.argv[2] == "":
-        print("Usage: python3 _override_check.py --overrides FILE list", file=sys.stderr)
+    # --overrides takes its file in = form (--overrides=FILE); the space
+    # form (--overrides FILE) is also accepted — checks/gate.sh uses it.
+    path = None
+    for i, arg in enumerate(sys.argv[1:], 1):
+        if arg.startswith("--overrides="):
+            path = arg.split("=", 1)[1]
+            break
+        if arg == "--overrides" and i + 1 < len(sys.argv):
+            path = sys.argv[i + 1]
+            break
+    if path is None or path == "" or "list" not in sys.argv[1:]:
+        print("Usage: python3 _override_check.py --overrides=FILE list", file=sys.stderr)
         return 2
-    path = sys.argv[2]
     if not os.path.isfile(path):
         return 0
     try:

@@ -5,16 +5,16 @@
 # handoff, pre-commit runs it for fast feedback, and CI runs it as a
 # required status check. Pre-commit is feedback only (it is bypassable
 # with --no-verify); the CI required check is the real gate. A workflow
-# without the branch ruleset is advisory — see docs/setup-checklist.md.
+# without the branch ruleset is advisory — see docs/operations/setup-checklist.md.
 #
 # Usage:
 #   bash checks/gate.sh --self-test
 #       Prove the checkers work: run the negative test corpus, then the
 #       gate's own scenarios (valid/expired/unknown overrides, the
 #       >2-overrides tripwire, --warn-only, zero checks).
-#   bash checks/gate.sh [--target DIR] [--job FILE] [--handoff FILE]
-#       [--review FILE --author-session ID --reviewer-session ID]
-#       [--tasks FILE] [--log FILE] [--action FILE]
+#   bash checks/gate.sh [--target=DIR] [--job=FILE] [--handoff=FILE]
+#       [--review=FILE --author-session=ID --reviewer-session=ID]
+#       [--tasks=FILE] [--log=FILE] [--action=FILE]
 #       [--warn-only] [--record-history]
 #       Run the checks that have inputs. With no inputs at all, the gate
 #       fails with "no checks ran" — a gate that checked nothing must
@@ -25,9 +25,11 @@
 # bad; 2 = usage error.
 #
 # Paths resolve from the repo root (the parent of checks/), never from
-# the working directory. --root DIR overrides the root (used by the
-# self-test to run scenarios in a temp copy). --overrides FILE and
-# --history FILE override the default paths (also for the self-test).
+# the working directory. --root=DIR overrides the root (used by the
+# self-test to run scenarios in a temp copy). --overrides=FILE and
+# --history=FILE override the default paths (also for the self-test).
+# Every option also accepts the space form (--target DIR), for callers
+# that already use it. The = form is the documented one.
 #
 # Overrides: checks/overrides.yaml is read automatically. A failing
 # check with a valid override prints OVERRIDDEN and passes. An expired
@@ -56,7 +58,7 @@ LOGFILE=""
 ACTION=""
 
 usage() {
-  echo "Usage: bash checks/gate.sh --self-test | [--target DIR] [--job FILE] [--handoff FILE] [--review FILE --author-session ID --reviewer-session ID] [--tasks FILE] [--log FILE] [--action FILE] [--warn-only] [--record-history]"
+  echo "Usage: bash checks/gate.sh --self-test | [--target=DIR] [--job=FILE] [--handoff=FILE] [--review=FILE --author-session=ID --reviewer-session=ID] [--tasks=FILE] [--log=FILE] [--action=FILE] [--warn-only] [--record-history]"
   echo "Run with no inputs and the gate fails: a gate that checked nothing must never report success."
 }
 
@@ -65,6 +67,19 @@ while [ $# -gt 0 ]; do
     --self-test) SELF_TEST=1; shift ;;
     --warn-only) WARN_ONLY=1; shift ;;
     --record-history) RECORD_HISTORY=1; shift ;;
+    --root=*) ROOT="${1#*=}"; OVERRIDES_FILE="$ROOT/checks/overrides.yaml"; HISTORY_FILE="$ROOT/checks/overrides-history.log"; shift ;;
+    --overrides=*) OVERRIDES_FILE="${1#*=}"; shift ;;
+    --history=*) HISTORY_FILE="${1#*=}"; shift ;;
+    --target=*) TARGET="${1#*=}"; shift ;;
+    --job=*) JOB="${1#*=}"; shift ;;
+    --handoff=*) HANDOFF="${1#*=}"; shift ;;
+    --handoff-tier=*) HANDOFF_TIER="${1#*=}"; shift ;;
+    --review=*) REVIEW="${1#*=}"; shift ;;
+    --author-session=*) AUTHOR_SESSION="${1#*=}"; shift ;;
+    --reviewer-session=*) REVIEWER_SESSION="${1#*=}"; shift ;;
+    --tasks=*) TASKS="${1#*=}"; shift ;;
+    --log=*) LOGFILE="${1#*=}"; shift ;;
+    --action=*) ACTION="${1#*=}"; shift ;;
     --root) ROOT="$2"; OVERRIDES_FILE="$ROOT/checks/overrides.yaml"; HISTORY_FILE="$ROOT/checks/overrides-history.log"; shift 2 ;;
     --overrides) OVERRIDES_FILE="$2"; shift 2 ;;
     --history) HISTORY_FILE="$2"; shift 2 ;;
@@ -262,7 +277,7 @@ Green: drafting. Amber: public. Red: publishing.
 Runs weekly.
 
 ## 11. Correction log
-Log location: docs/step-4-corrections-log-example.md
+Log location: docs/user/step-4-every-correction-becomes-the-system.md
 EOF
   cat > "$tmp/overrides-good.yaml" <<EOF
 overrides:

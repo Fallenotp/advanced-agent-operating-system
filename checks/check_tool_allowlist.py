@@ -2,7 +2,7 @@
 """Step 2 allowlist check (BLOCK): high-risk tools in the structured tool list.
 
 Usage: python3 check_tool_allowlist.py <job-description-file>
-       [--approvals approvals.yaml] [--tier block|warn]
+       [--approvals=approvals.yaml] [--tier=block|warn]
 
 Reads the job description's Section 8 ("Tools & access") — the
 structured lines "Can read:", "Can change:", "Can never touch:" — not
@@ -121,7 +121,7 @@ def main() -> int:
         elif a.startswith("--tier="):
             tier = a.split("=", 1)[1]
     if tier not in ("block", "warn") or len(args) != 1:
-        print("Usage: python3 check_tool_allowlist.py <job-description-file> [--approvals approvals.yaml] [--tier block|warn]")
+        print("Usage: python3 check_tool_allowlist.py <job-description-file> [--approvals=approvals.yaml] [--tier=block|warn]")
         return 2
     try:
         text = open(args[0], encoding="utf-8").read()

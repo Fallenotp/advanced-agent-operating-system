@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Step 5 Level 5 check (BLOCK): a Level 5 action needs a structured approval.
 
-Usage: python3 check_level5.py <action.json> [--approvals approvals.yaml]
+Usage: python3 check_level5.py <action.json> [--approvals=approvals.yaml]
 
 The action file is JSON (machine-written, so the format is exact):
   {"task-id": "weekly-watcher", "action-class": "update-wiki",
@@ -12,7 +12,10 @@ An approval covers the action when ALL of these hold:
 - action-class is in the fixed list: report-only, update-wiki,
   update-docs, send-summary, file-issue, update-schedule. Free-text
   action classes are not checkable, so they are not allowed.
-- The approval's scope appears in the action's scope (or is "*").
+- The action's scope appears in the approval's scope (or the approval
+  scope is "*"). An approval for "update the wiki page" does not cover
+  an action that updates the wiki page AND the docs — doing more than
+  was approved is not covered.
 - approved-by is a named human and is NOT the actor. An agent that can
   write to approvals.yaml can approve itself — that is why approvals.yaml
   is protected by CODEOWNERS and a branch ruleset, not by this script.
@@ -52,7 +55,7 @@ def main() -> int:
         if a.startswith("--approvals="):
             approvals_path = a.split("=", 1)[1]
     if len(args) != 1:
-        print("Usage: python3 check_level5.py <action.json> [--approvals approvals.yaml]")
+        print("Usage: python3 check_level5.py <action.json> [--approvals=approvals.yaml]")
         return 2
     try:
         action = json.load(open(args[0], encoding="utf-8"))
@@ -97,7 +100,7 @@ def main() -> int:
         print(f"FAIL: no approval record for task {task_id!r} / action-class {action_class!r} — an approval in chat alone does not count")
         return 1
     entry_scope = str(matched.get("scope", "")).strip()
-    if entry_scope != "*" and entry_scope and entry_scope.lower() not in scope.lower():
+    if entry_scope != "*" and entry_scope and scope.lower() not in entry_scope.lower():
         print(f"FAIL: approval scope {entry_scope!r} does not cover this action's scope {scope!r}")
         return 1
     approver = str(matched.get("approved-by", "")).strip()

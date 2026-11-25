@@ -1,21 +1,25 @@
 #!/usr/bin/env python3
 """Step 4 corrections check: a pattern row must prove its fix happened.
 
-Usage: python3 check_corrections.py <log-file> [--root DIR] [--tier block|warn]
+Usage: python3 check_corrections.py <log-file> [--root=DIR] [--tier=block|warn]
 
-The log is the markdown table in docs/step-4-corrections-log-example.md:
+The log is the markdown table in docs/user/step-4-every-correction-becomes-the-system.md:
   Date | Problem ID | System | Task | Expected vs actual | Severity |
   Pattern? | Fix proposed | Owner approved? | Tested?
 
 Rules:
 - Every row needs a problem-id slug (e.g. "video-timing-mismatch").
   Rows are grouped by exact problem-id match, never by substring.
-- A row marked Pattern? = Yes must carry: a Fix proposed that names a
-  file (a path that exists under --root) AND that file must have changed
-  after the row's date (checked with git log when the root is a git
-  repo, else file mtime — mtime is weaker and the script says so); and
-  an Owner approved? cell reading "Yes — <name>, <date>" with a date
-  that is not in the future.
+- A row whose Pattern? cell starts with "Yes" (case-insensitive,
+  leading whitespace stripped) is a pattern row and must carry: a Fix
+  proposed that names a file (a path that exists under --root) AND that
+  file must have changed on or after the row's date (checked with git
+  log when the root is a git repo, else file mtime — mtime is weaker
+  and the script says so); and an Owner approved? cell reading
+  "Yes — <name>, <date>" with a date that is not in the future.
+  A cell starting with "No" is not a pattern row and is skipped.
+  Any other non-empty Pattern? value is not silently skipped: it
+  produces a WARNING naming the unrecognized value.
 - A row that says "fix applied" with no actual change fails the
   file-exists/file-changed check. A real fix recorded only in prose
   ("updated the skill") fails the file-name check — write the file down.
@@ -62,6 +66,8 @@ def _rows(text):
         if header is None:
             header = [c.lower() for c in cells]
             continue
+        if [c.lower() for c in cells] == header:
+            continue  # a repeated header row (second table in the file) is not a data row
         if len(cells) != len(header):
             errors.append(f"line {line_no}: {len(cells)} columns, expected {len(header)}")
             continue
@@ -72,7 +78,7 @@ def _rows(text):
 
 
 def _file_changed_after(root, path, after_date):
-    """True if the file changed after after_date. Prefers git log; falls
+    """True if the file changed on or after after_date. Prefers git log; falls
     back to file mtime and says so (mtime is weaker — a fresh checkout
     makes every file look new). Returns (changed, method)."""
     full = os.path.join(root, path)
@@ -85,11 +91,11 @@ def _file_changed_after(root, path, after_date):
         )
         if out.returncode == 0 and out.stdout.strip():
             changed = datetime.datetime.fromisoformat(out.stdout.strip()).date()
-            return changed > after_date, "git"
+            return changed >= after_date, "git"
     except (OSError, ValueError, subprocess.SubprocessError):
         pass
     mtime = datetime.date.fromtimestamp(os.path.getmtime(full))
-    return mtime > after_date, "mtime"
+    return mtime >= after_date, "mtime"
 
 
 def main() -> int:
@@ -102,7 +108,7 @@ def main() -> int:
         elif a.startswith("--tier="):
             tier = a.split("=", 1)[1]
     if tier not in ("block", "warn") or len(args) != 1:
-        print("Usage: python3 check_corrections.py <log-file> [--root DIR] [--tier block|warn]")
+        print("Usage: python3 check_corrections.py <log-file> [--root=DIR] [--tier=block|warn]")
         return 2
     try:
         text = open(args[0], encoding="utf-8").read()
@@ -126,7 +132,21 @@ def main() -> int:
         if row_date is None:
             failures.append(f"{label}: date is not YYYY-MM-DD")
             continue
-        if row.get("pattern?", "").strip().lower() != "yes":
+        # Pattern? classification: "Yes" starts a pattern row, "No" is a
+        # one-off. Anything else non-empty is not silently skipped — it
+        # warns, naming the value, so a prose cell can never again make
+        # a pattern row look verified when it was never checked.
+        pattern_cell = row.get("pattern?", "").strip()
+        pattern_lower = pattern_cell.lower()
+        if pattern_lower.startswith("yes"):
+            pass  # pattern row: verify it below
+        elif pattern_lower.startswith("no") or pattern_cell == "":
+            continue
+        else:
+            warnings.append(
+                f"{label}: Pattern? value {pattern_cell!r} is not recognized "
+                "— expected a value starting with 'Yes' or 'No'; row was not verified"
+            )
             continue
         fix = row.get("fix proposed", "")
         paths = PATH_TOKEN.findall(fix)
@@ -141,7 +161,7 @@ def main() -> int:
                 if method == "missing":
                     problems.append(f"{label}: fix names {path!r}, which does not exist under {root}")
                 elif not changed:
-                    problems.append(f"{label}: {path!r} did not change after {row_date} (checked by {method})")
+                    problems.append(f"{label}: {path!r} did not change on or after {row_date} (checked by {method})")
                 elif method == "mtime":
                     warnings.append(f"{label}: {path!r} verified by mtime only — git was unavailable, so a fresh checkout could fake this")
         approval = row.get("owner approved?", "")

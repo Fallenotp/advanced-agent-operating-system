@@ -2,8 +2,8 @@
 """Step 3 review check: the reviewer must not be the author, and the
 review must quote the work.
 
-Usage: python3 check_review.py <review-file> --author-session ID
-       --reviewer-session ID [--tier block|warn]
+Usage: python3 check_review.py <review-file> --author-session=ID
+       --reviewer-session=ID [--tier=block|warn]
 
 Two checks:
 1. Reviewer session id differs from author session id. Comparing names
@@ -40,7 +40,7 @@ def main() -> int:
         elif a.startswith("--tier="):
             tier = a.split("=", 1)[1]
     if tier not in ("block", "warn") or len(args) != 1 or not author or not reviewer:
-        print("Usage: python3 check_review.py <review-file> --author-session ID --reviewer-session ID [--tier block|warn]")
+        print("Usage: python3 check_review.py <review-file> --author-session=ID --reviewer-session=ID [--tier=block|warn]")
         return 2
     try:
         text = open(args[0], encoding="utf-8").read()
