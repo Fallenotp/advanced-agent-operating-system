@@ -27,7 +27,7 @@ The tiers live in `checks/manifest.yaml`. BLOCK stops the merge; WARN prints and
 
 Before anything is handed over:
 
-1. Run the check for this type of work and show what it said — the real output, screenshot, total, or source, not a summary.
+1. Run the check for this type of work and show what it said — the real output, screenshot, total, or source, not a summary. For visual work, the evidence is the rendered image itself, looked at as a picture: reading an SVG or XML source is not a visual check.
 2. Fix what failed, biggest first, and run the check again. At most 3 tries. If it still fails, stop and tell the owner what is left, with the evidence.
 3. Say what you did NOT check, and why.
 4. Never change the check to make it pass. If you think the check is wrong, say so and let the owner change it.

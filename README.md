@@ -12,11 +12,13 @@
 
 </div>
 
+Picture this: you ask an agent to draft an email, and it sends the draft to almost 200,000 people. Nobody told it to send anything. It had the tool to send mail, so it sent the mail. That is the mistake this manual exists to stop.
+
 You already hand work to an AI agent — Claude Code, Codex, Cursor, or whichever your harness is — on the machines you own. This manual shows you how to manage it the way you would manage an employee: give it a written job, limit what it can touch, check its work before you see it, learn from every correction, and only then let it act on its own.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/readme/five-steps-dark.svg">
-  <img alt="The five steps, in order. 1. Onboard it like a new hire: write the job first. 2. Match the oversight to the stakes: limit what it can touch. 3. Never take the first look: check its work before you see it. 4. Every correction becomes the system: log it and rewrite the skill. 5. Make it proactive: only for boring, recurring problems. Each step depends on the one before it, and skipping ahead is what breaks things." src="assets/readme/five-steps-light.svg" width="100%">
+  <img alt="The five steps, in order. 1. Onboard it like a new hire: write the job first. 2. Match the oversight to the stakes: limit what it can touch. 3. Never take the first look: check its work before you see it. 4. Every correction becomes the system: log it and rewrite the skill. 5. Make it proactive: only for boring, recurring problems. A correction sends the work back to step 3, the check, before it moves on. Each step depends on the one before it, and skipping ahead is what breaks things." src="assets/readme/five-steps-light.svg" width="100%">
 </picture>
 
 ## What it gives you
@@ -25,7 +27,7 @@ You already hand work to an AI agent — Claude Code, Codex, Cursor, or whicheve
 
 **Oversight that fits the stakes.** One agent, one job, only the tools it needs. A rule in a prompt is a suggestion; taking the tool away is a restriction. Low-risk work goes alone, public or money work asks first, irreversible work goes to you.
 
-**A check before your first look.** The agent proves its work with real evidence — a test result, a screenshot, a recalculated total — and a different agent checks anything the public, a client, or money will touch. First drafts land roughly 70% there; with checks they get to 95–99%.
+**A check before your first look.** The agent proves its work with real evidence — a test result, a screenshot, a recalculated total — and a different agent checks anything the public, a client, or money will touch. The video puts first drafts at roughly 70%; with checks, they get to 95–99%.
 
 **A system that learns.** Every correction is logged once, with context. The second time the same thing goes wrong, the skill itself is rewritten, with your approval. The agent does not retrain; its written instructions improve.
 
