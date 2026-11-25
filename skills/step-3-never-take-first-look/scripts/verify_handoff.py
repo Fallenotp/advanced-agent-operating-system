@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check a handoff file for Step 3 evidence.
 
-Usage: python3 verify_handoff.py <handoff-file> [--tier block|warn]
+Usage: python3 verify_handoff.py <handoff-file> [--tier=block|warn]
 Checks the file contains: (1) real evidence under an "Evidence" heading
 (or an "Evidence:" line), (2) a "Not checked" section with substantive
 content, and (3) a tries count of 3 or fewer.
@@ -164,10 +164,10 @@ def main() -> int:
         if a.startswith("--tier="):
             tier = a.split("=", 1)[1]
     if tier not in ("block", "warn"):
-        print("Usage: python3 verify_handoff.py <handoff-file> [--tier block|warn]")
+        print("Usage: python3 verify_handoff.py <handoff-file> [--tier=block|warn]")
         return 2
     if len(args) != 1:
-        print("Usage: python3 verify_handoff.py <handoff-file> [--tier block|warn]")
+        print("Usage: python3 verify_handoff.py <handoff-file> [--tier=block|warn]")
         return 2
     try:
         text = open(args[0], encoding="utf-8").read()
