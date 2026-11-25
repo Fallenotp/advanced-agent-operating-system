@@ -12,7 +12,7 @@ One page, plain English. Fill in every field before the agent starts.
 8. **Tools & access** — what it can read, what it can change, what it can never touch.
 9. **Green / amber / red** — acts alone / asks first / hands to the owner. Nothing public, involving money, or irreversible without the owner's yes.
 10. **Schedule + report** — when it runs, and when/how it reports back for review.
-11. **Correction log** — where fixes go, so the same mistake is never fixed twice. See `../../../docs/step-4-corrections-log-example.md`.
+11. **Correction log** — where fixes go, so the same mistake is never fixed twice. See `../../../docs/user/step-4-every-correction-becomes-the-system.md`.
 
 ## First-job test
 
