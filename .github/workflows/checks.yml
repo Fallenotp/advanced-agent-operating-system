@@ -3,7 +3,7 @@ name: checks
 # Runs the repo's own Step 3 checkers on every pull request, plus a push
 # to main as a backstop. If any check fails, the merge is blocked — but
 # only once the branch ruleset requires this job as a status check (see
-# docs/setup-checklist.md). Without that ruleset, a red run is advice.
+# docs/operations/setup-checklist.md). Without that ruleset, a red run is advice.
 # Enforcement is lint checks / CI-style checks, never agent-side hooks.
 on:
   pull_request:
@@ -92,7 +92,7 @@ jobs:
           Runs Monday, Wednesday, Friday. Reports drafts to the owner the same day.
 
           ## 11. Correction log
-          Log location: docs/step-4-corrections-log-example.md
+          Log location: docs/user/step-4-every-correction-becomes-the-system.md
           EOF
           python3 skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py /tmp/filled-job.md
 
@@ -136,6 +136,14 @@ jobs:
           rm -f /tmp/corrections-test.md
           python3 skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py --log /tmp/corrections-test.md --problem-id video-timing-mismatch --system test --task test --expected a --actual b --severity low
           python3 skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py --log /tmp/corrections-test.md --problem-id video-timing-mismatch --system test --task test --expected a --actual b --severity low | grep -q "PATTERN" || { echo "FAIL: second identical problem-id did not print PATTERN"; exit 1; }
+
+      - name: Step 4 corrections log — the repo's own log must pass at both tiers
+        run: |
+          # The log's pattern row names a real fix file; the checker must
+          # verify it, not skip it. Run at both tiers: warn is what the
+          # log format ships as, block is what the merge gate enforces.
+          python3 checks/check_corrections.py docs/user/step-4-every-correction-becomes-the-system.md --root=. --tier=warn
+          python3 checks/check_corrections.py docs/user/step-4-every-correction-becomes-the-system.md --root=. --tier=block
 
       - name: Step 3 verify_handoff — good handoff passes, bad handoff fails
         run: |
