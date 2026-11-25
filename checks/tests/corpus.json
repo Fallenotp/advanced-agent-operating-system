@@ -1,559 +1,948 @@
 {
-  "cases": [
-    {
-      "id": "S1a",
-      "desc": "Step 1: nonsense prose containing all field words must FAIL (substring matching is not a check)",
-      "files": {
-        "input.md": "The greenhouse admission process follows footsteps. Role of the payroll team: mission unknown. The owner of the schedule is the tools committee. Green steps deliverable correction log.\n"
-      },
-      "run": ["python3", "{root}/skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py", "{dir}/input.md"],
-      "expect": "fail"
-    },
-    {
-      "id": "S1b",
-      "desc": "Step 1: filled brief with '[ ]' in an example must PASS (the ban is on empty fields, not on brackets in real text)",
-      "files": {
-        "input.md": "# Agent Job Description — Review responder\n\n## 1. Role\nReview responder for the business.\n\n## 2. Mission\nDraft replies to new reviews within one day.\n\n## 3. Owner\nThe business owner checks every draft and owns the outcome.\n\n## 4. Responsibilities\nDraft replies to new reviews, three times a week.\n\n## 5. Steps\n1. Read the review. 2. Draft a reply in the business voice. 3. Hand the draft to the owner.\n\n## 6. Deliverable\nA draft reply, with the owner's approval before anything goes out. Mark done items [ ] in the tracker before handing over.\n\n## 7. Sources of truth\nThe review itself and the business services page.\n\n## 8. Tools\nCan read reviews. Can never touch publishing or the live site.\n\n## 9. Green / amber / red\nGreen: drafting. Amber: anything public — owner approves first. Red: publishing.\n\n## 10. Schedule\nRuns Monday, Wednesday, Friday. Reports drafts to the owner the same day.\n\n## 11. Correction log\nLog location: docs/step-4-corrections-log-example.md\n"
-      },
-      "run": ["python3", "{root}/skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py", "{dir}/input.md"],
-      "expect": "pass"
-    },
-    {
-      "id": "S1c",
-      "desc": "Step 1: headings only, zero content, must FAIL",
-      "files": {
-        "input.md": "# Agent Job Description\n\n## 1. Role\n\n## 2. Mission\n\n## 3. Owner\n\n## 4. Responsibilities\n\n## 5. Steps\n\n## 6. Deliverable\n\n## 7. Sources of truth\n\n## 8. Tools\n\n## 9. Green / amber / red\n\n## 10. Schedule\n\n## 11. Correction log\n"
-      },
-      "run": ["python3", "{root}/skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py", "{dir}/input.md"],
-      "expect": "fail"
-    },
-    {
-      "id": "S1d",
-      "desc": "Step 1: blank template must FAIL",
-      "run": ["python3", "{root}/skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py", "{root}/templates/job-description-template.md"],
-      "expect": "fail"
-    },
-    {
-      "id": "S1e",
-      "desc": "Step 1: filled fixture must PASS",
-      "files": {
-        "input.md": "# Agent Job Description — Review responder\n\n## 1. Role\nReview responder for the business.\n\n## 2. Mission\nDraft replies to new reviews within one day.\n\n## 3. Owner\nThe business owner checks every draft and owns the outcome.\n\n## 4. Responsibilities\nDraft replies to new reviews, three times a week.\n\n## 5. Steps\n1. Read the review. 2. Draft a reply in the business voice. 3. Hand the draft to the owner.\n\n## 6. Deliverable\nA draft reply, with the owner's approval before anything goes out.\n\n## 7. Sources of truth\nThe review itself and the business services page.\n\n## 8. Tools\nCan read reviews. Can never touch publishing or the live site.\n\n## 9. Green / amber / red\nGreen: drafting. Amber: anything public — owner approves first. Red: publishing.\n\n## 10. Schedule\nRuns Monday, Wednesday, Friday. Reports drafts to the owner the same day.\n\n## 11. Correction log\nLog location: docs/step-4-corrections-log-example.md\n"
-      },
-      "run": ["python3", "{root}/skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py", "{dir}/input.md"],
-      "expect": "pass"
-    },
-    {
-      "id": "S1f",
-      "desc": "Step 1: explicit 'N/A: <reason>' counts as filled",
-      "files": {
-        "input.md": "# Agent Job Description — Review responder\n\n## 1. Role\nReview responder for the business.\n\n## 2. Mission\nDraft replies to new reviews within one day.\n\n## 3. Owner\nThe business owner checks every draft and owns the outcome.\n\n## 4. Responsibilities\nDraft replies to new reviews, three times a week.\n\n## 5. Steps\n1. Read the review. 2. Draft a reply in the business voice. 3. Hand the draft to the owner.\n\n## 6. Deliverable\nA draft reply, with the owner's approval before anything goes out.\n\n## 7. Sources of truth\nThe review itself and the business services page.\n\n## 8. Tools\nCan read reviews. Can never touch publishing or the live site.\n\n## 9. Green / amber / red\nGreen: drafting. Amber: anything public — owner approves first. Red: publishing.\n\n## 10. Schedule\nN/A: one-off job, no schedule to keep.\n\n## 11. Correction log\nLog location: docs/step-4-corrections-log-example.md\n"
-      },
-      "run": ["python3", "{root}/skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py", "{dir}/input.md"],
-      "expect": "pass"
-    },
-    {
-      "id": "S2a",
-      "desc": "Step 2 prose scan: ordinary English ('Pay attention', 'Post a summary', 'Delete temp files') must be FLAGGED (warn)",
-      "files": {
-        "input.txt": "Pay attention to tone. Post a summary to the owner's private dashboard. Delete temporary working files when done.\n"
-      },
-      "run": ["python3", "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py", "{dir}/input.txt"],
-      "expect": "warn"
-    },
-    {
-      "id": "S2b",
-      "desc": "Step 2 prose scan: 'Never forget: the agent must send the weekly report' must be FLAGGED — 'never' belongs to 'forget', not to 'send'",
-      "files": {
-        "input.txt": "Never forget: the agent must send the weekly report to clients.\n"
-      },
-      "run": ["python3", "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py", "{dir}/input.txt"],
-      "expect": "warn"
-    },
-    {
-      "id": "S2c",
-      "desc": "Step 2 prose scan: synonyms (email, push, remove, charge) are NOT caught by the prose scan — documented gap, the allowlist is the block",
-      "files": {
-        "input.txt": "The agent will email the client, push to main, remove the old file, and charge the card.\n"
-      },
-      "run": ["python3", "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py", "{dir}/input.txt"],
-      "expect": "pass"
-    },
-    {
-      "id": "S2d",
-      "desc": "Step 2 prose scan: 'It is not the case that ... never send; it may send weekly digests' must be FLAGGED — the second sentence is an allowance",
-      "files": {
-        "input.txt": "It is not the case that the agent should never send; it may send weekly digests to clients.\n"
-      },
-      "run": ["python3", "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py", "{dir}/input.txt"],
-      "expect": "warn"
-    },
-    {
-      "id": "S2e",
-      "desc": "Step 2 prose scan: 'may send emails ... deploy to production' must be FLAGGED (control)",
-      "files": {
-        "input.txt": "the agent may send emails to clients and deploy to production\n"
-      },
-      "run": ["python3", "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py", "{dir}/input.txt"],
-      "expect": "warn"
-    },
-    {
-      "id": "S2f",
-      "desc": "Step 2 prose scan: 'postpone' and 'sender' must NOT match 'post'/'send' (exact words only)",
-      "files": {
-        "input.txt": "Please postpone the launch and check the sender address.\n"
-      },
-      "run": ["python3", "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py", "{dir}/input.txt"],
-      "expect": "pass"
-    },
-    {
-      "id": "S2g",
-      "desc": "Step 2 prose scan: ban in one sentence must not exempt an allowance in the next",
-      "files": {
-        "input.txt": "Do not send anything without approval. The agent may send the weekly report to clients.\n"
-      },
-      "run": ["python3", "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py", "{dir}/input.txt"],
-      "expect": "warn"
-    },
-    {
-      "id": "S2h",
-      "desc": "Step 2 prose scan: past-tense reports ('was deleted', 'was published') must NOT match",
-      "files": {
-        "input.txt": "The old file was deleted yesterday and the post was published last week.\n"
-      },
-      "run": ["python3", "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py", "{dir}/input.txt"],
-      "expect": "pass"
-    },
-    {
-      "id": "S2i",
-      "desc": "Step 2 prose scan: 'deployment' must NOT match 'deploy'",
-      "files": {
-        "input.txt": "Read the deployment guide before the meeting.\n"
-      },
-      "run": ["python3", "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py", "{dir}/input.txt"],
-      "expect": "pass"
-    },
-    {
-      "id": "A2a",
-      "desc": "Step 2 allowlist: 'Can change: send emails' with no approval record must FAIL",
-      "files": {
-        "job.md": "# Agent Job Description — Review responder\n\n## 1. Role\nReview responder for the business.\n\n## 8. Tools\nCan read: reviews.\nCan change: send emails to clients.\nCan never touch: the live site.\n"
-      },
-      "run": ["python3", "{root}/checks/check_tool_allowlist.py", "{dir}/job.md"],
-      "expect": "fail"
-    },
-    {
-      "id": "A2b",
-      "desc": "Step 2 allowlist: 'Can change: send emails' WITH an approval record must PASS",
-      "files": {
-        "review-responder.md": "# Agent Job Description — Review responder\n\n## 1. Role\nReview responder for the business.\n\n## 8. Tools\nCan read: reviews.\nCan change: send emails to clients.\nCan never touch: the live site.\n",
-        "approvals.yaml": "approvals:\n  - task-id: review-responder\n    action-class: report-only\n    scope: send emails to clients\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2099-01-01\n"
-      },
-      "run": ["python3", "{root}/checks/check_tool_allowlist.py", "{dir}/review-responder.md", "--approvals={dir}/approvals.yaml"],
-      "expect": "pass"
-    },
-    {
-      "id": "A2c",
-      "desc": "Step 2 allowlist: a high-risk tool in 'Can never touch:' is a ban, never a failure",
-      "files": {
-        "job.md": "# Agent Job Description — Review responder\n\n## 8. Tools\nCan read: reviews.\nCan change: read reviews.\nCan never touch: send, publish, deploy.\n"
-      },
-      "run": ["python3", "{root}/checks/check_tool_allowlist.py", "{dir}/job.md"],
-      "expect": "pass"
-    },
-    {
-      "id": "A2d",
-      "desc": "Step 2 allowlist: blank template must PASS (nothing is allowed)",
-      "run": ["python3", "{root}/checks/check_tool_allowlist.py", "{root}/templates/job-description-template.md"],
-      "expect": "pass"
-    },
-    {
-      "id": "A2e",
-      "desc": "Step 2 allowlist: synonyms in 'Can change:' (email, push, remove, charge) must FAIL — the prose scan cannot see them, the list can",
-      "files": {
-        "job.md": "# Agent Job Description — Review responder\n\n## 8. Tools\nCan read: reviews.\nCan change: email the client, push to main, remove the old file, charge the card.\nCan never touch: the live site.\n"
-      },
-      "run": ["python3", "{root}/checks/check_tool_allowlist.py", "{dir}/job.md"],
-      "expect": "fail"
-    },
-    {
-      "id": "S3a",
-      "desc": "Step 3 handoff: 'Evidence was not collected.' must FAIL (no machine-checkable evidence)",
-      "files": {
-        "input.md": "## Evidence\nEvidence was not collected.\n## Not checked\nDid not check the mobile layout.\nTries used: 1\n"
-      },
-      "run": ["python3", "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py", "{dir}/input.md"],
-      "expect": "fail"
-    },
-    {
-      "id": "S3b",
-      "desc": "Step 3 handoff: fluent fluff with no command, path, or number must FAIL",
-      "files": {
-        "input.md": "## Evidence\nI checked everything carefully and it all looks good to me.\n## Not checked\nNothing at all, really, I checked it all thoroughly.\nTries: 1\n"
-      },
-      "run": ["python3", "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py", "{dir}/input.md"],
-      "expect": "fail"
-    },
-    {
-      "id": "S3c",
-      "desc": "Step 3 handoff: 'Used 2 tries' must PASS (wider tries phrasings accepted)",
-      "files": {
-        "input.md": "## Evidence\nRan the full test suite: 42 passed, 0 failed.\n## Not checked\nThe Windows build — no Windows machine here.\nUsed 2 tries\n"
-      },
-      "run": ["python3", "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py", "{dir}/input.md"],
-      "expect": "pass"
-    },
-    {
-      "id": "S3d",
-      "desc": "Step 3 handoff: 'Tries — 1' (em dash) must PASS",
-      "files": {
-        "input.md": "## Evidence\nRan pytest: 18 passed.\n## Not checked\nDid not check the PDF export.\nTries — 1\n"
-      },
-      "run": ["python3", "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py", "{dir}/input.md"],
-      "expect": "pass"
-    },
-    {
-      "id": "S3e",
-      "desc": "Step 3 handoff: 'Tries: 5 last time, but this time tries: 1' must PASS (last mention wins)",
-      "files": {
-        "input.md": "## Evidence\nRan pytest: 18 passed.\n## Not checked\nDid not check the PDF export.\nTries: 5 last time, but this time tries: 1\n"
-      },
-      "run": ["python3", "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py", "{dir}/input.md"],
-      "expect": "pass"
-    },
-    {
-      "id": "S3f",
-      "desc": "Step 3 handoff: fabricated numbers PASS the script but must be labelled reviewer-checked (genuineness is not script-checkable)",
-      "files": {
-        "input.md": "## Evidence\nRan the full test suite: 214 passed, 0 failed, exit 0. Screenshot reviewed.\n## Not checked\nDid not check the PDF export.\nTries: 1\n"
-      },
-      "run": ["python3", "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py", "{dir}/input.md"],
-      "expect": "contains",
-      "text": "reviewer-checked"
-    },
-    {
-      "id": "V-a",
-      "desc": "Step 3 handoff: 'Not checked: nothing' as a line under a heading must FAIL (label stripped before judging)",
-      "files": {
-        "input.md": "## Evidence\nRan check_tools.py on the template: PASS, exit 0.\n## Not checked\nNot checked: nothing\nTries used: 1\n"
-      },
-      "run": ["python3", "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py", "{dir}/input.md"],
-      "expect": "fail"
-    },
-    {
-      "id": "V-b",
-      "desc": "Step 3 handoff: vacuous 'Evidence:' line must FAIL even when a substantive line from the next section follows it",
-      "files": {
-        "input.md": "## Evidence\nEvidence: The evidence is that it worked.\nNot checked: did not test the PDF export\nTries used: 1\n"
-      },
-      "run": ["python3", "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py", "{dir}/input.md"],
-      "expect": "fail"
-    },
-    {
-      "id": "H-good-1",
-      "desc": "Step 3 handoff: good handoff (headings style) must PASS",
-      "files": {
-        "input.md": "## Evidence\nRan check_tools.py on the template: PASS, exit 0. Ran watcher_check.py on one overdue task: OVERDUE listed it.\n## Not checked\nGitHub rendering — nothing has been pushed yet, so it could not be checked.\nTries used: 1\n"
-      },
-      "run": ["python3", "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py", "{dir}/input.md"],
-      "expect": "pass"
-    },
-    {
-      "id": "H-good-2",
-      "desc": "Step 3 handoff: good handoff (inline style) must PASS",
-      "files": {
-        "input.md": "Evidence: Ran the full test suite: 42 passed, 0 failed.\nNot checked: the Windows build — no Windows machine here.\nTries: 2\n"
-      },
-      "run": ["python3", "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py", "{dir}/input.md"],
-      "expect": "pass"
-    },
-    {
-      "id": "H-good-3",
-      "desc": "Step 3 handoff: good handoff (multi-line evidence) must PASS",
-      "files": {
-        "input.md": "## Evidence\nRan pytest: 18 passed.\nAlso ran the linter: 0 errors.\n## Not checked\nDid not check the mobile layout.\nTries: 1\n"
-      },
-      "run": ["python3", "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py", "{dir}/input.md"],
-      "expect": "pass"
-    },
-    {
-      "id": "RCa",
-      "desc": "Step 3 run_checks: package.json whose description contains 'test' but has no test script must FAIL (zero checks ran although code checks apply)",
-      "files": {
-        "package.json": "{\"description\": \"test suite for the project\"}\n"
-      },
-      "run": ["bash", "{root}/skills/step-3-never-take-first-look/scripts/run_checks.sh", "{dir}"],
-      "expect": "fail"
-    },
-    {
-      "id": "RCb",
-      "desc": "Step 3 run_checks: a test script that is just 'true' must WARN (no test count in the output), not PASS",
-      "files": {
-        "package.json": "{\"scripts\": {\"test\": \"true\"}}\n"
-      },
-      "run": ["bash", "{root}/skills/step-3-never-take-first-look/scripts/run_checks.sh", "{dir}"],
-      "expect": "warn"
-    },
-    {
-      "id": "RC-good",
-      "desc": "Step 3 run_checks: build/lint/typecheck plus a test that prints a count must PASS",
-      "files": {
-        "package.json": "{\"scripts\": {\"build\": \"true\", \"lint\": \"true\", \"typecheck\": \"true\", \"test\": \"echo '3 passed, 0 failed'\"}}\n"
-      },
-      "run": ["bash", "{root}/skills/step-3-never-take-first-look/scripts/run_checks.sh", "{dir}"],
-      "expect": "pass"
-    },
-    {
-      "id": "RC-docs",
-      "desc": "Step 3 run_checks: a docs-only directory (no package.json, no pyproject.toml) must PASS with a note, not fail",
-      "files": {},
-      "run": ["bash", "{root}/skills/step-3-never-take-first-look/scripts/run_checks.sh", "{dir}"],
-      "expect": "contains",
-      "text": "no code checks apply"
-    },
-    {
-      "id": "RC-noscripts",
-      "desc": "Step 3 run_checks: a package.json with no scripts at all must FAIL (code checks apply, none ran)",
-      "files": {
-        "package.json": "{}\n"
-      },
-      "run": ["bash", "{root}/skills/step-3-never-take-first-look/scripts/run_checks.sh", "{dir}"],
-      "expect": "fail"
-    },
-    {
-      "id": "L4a",
-      "desc": "Step 4 log: three different problems ('video timing', 'video captions', 'video') must NOT count as one pattern",
-      "shell": "LOG={dir}/log.md; printf '| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\\n|---|---|---|---|---|---|---|---|---|\\n' > $LOG; python3 {root}/skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py --system video --task timing --problem-id video-timing-mismatch --expected x --actual y --log $LOG > /dev/null; python3 {root}/skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py --system video --task captions --problem-id video-captions-mismatch --expected x --actual y --log $LOG > /dev/null; python3 {root}/skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py --system video --task timing --problem-id video --expected x --actual y --log $LOG",
-      "expect": "contains",
-      "text": "No pattern yet"
-    },
-    {
-      "id": "L4b",
-      "desc": "Step 4 log: the same problem-id twice must print PATTERN",
-      "shell": "LOG={dir}/log.md; printf '| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\\n|---|---|---|---|---|---|---|---|---|\\n' > $LOG; python3 {root}/skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py --system video --task timing --problem-id video-timing-mismatch --expected x --actual y --log $LOG > /dev/null; python3 {root}/skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py --system video --task timing --problem-id video-timing-mismatch --expected x --actual y --log $LOG",
-      "expect": "contains",
-      "text": "PATTERN"
-    },
-    {
-      "id": "L4c",
-      "desc": "Step 4 log: a problem-id that is not a slug must be refused",
-      "files": {
-        "log.md": "# Log\n"
-      },
-      "run": ["python3", "{root}/skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py", "--system", "video", "--task", "timing", "--problem-id", "Video Timing!", "--expected", "x", "--actual", "y", "--log", "{dir}/log.md"],
-      "expect": "fail"
-    },
-    {
-      "id": "C4a",
-      "desc": "Step 4 corrections check: a pattern row with a real fix file changed after the log date and a dated approval must PASS",
-      "files": {
-        "log.md": "# Corrections Log\n\n| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | step-four-page-unreadable | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | Yes | Removed the sticky menu — see skill.md | Yes — Ian, 2026-11-23 | Yes |\n",
-        "skill.md": "placeholder content for the cited fix\n"
-      },
-      "mtimes": {
-        "skill.md": "2026-11-24"
-      },
-      "run": ["python3", "{root}/checks/check_corrections.py", "{dir}/log.md", "--root={dir}", "--tier=block"],
-      "expect": "pass"
-    },
-    {
-      "id": "C4b",
-      "desc": "Step 4 corrections check: a pattern row whose fix names a file that does not exist must FAIL",
-      "files": {
-        "log.md": "# Corrections Log\n\n| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | step-four-page-unreadable | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | Yes | Removed the sticky menu — see nonexistent.md | Yes — Ian, 2026-11-23 | Yes |\n"
-      },
-      "run": ["python3", "{root}/checks/check_corrections.py", "{dir}/log.md", "--root={dir}", "--tier=block"],
-      "expect": "fail"
-    },
-    {
-      "id": "C4c",
-      "desc": "Step 4 corrections check: a pattern row with no fix proposed must FAIL",
-      "files": {
-        "log.md": "# Corrections Log\n\n| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | step-four-page-unreadable | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | Yes |  | Yes — Ian, 2026-11-23 | Yes |\n"
-      },
-      "run": ["python3", "{root}/checks/check_corrections.py", "{dir}/log.md", "--root={dir}", "--tier=block"],
-      "expect": "fail"
-    },
-    {
-      "id": "C4d",
-      "desc": "Step 4 corrections check: a pattern row whose approval is prose ('the owner said so') with no date must FAIL",
-      "files": {
-        "log.md": "# Corrections Log\n\n| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | step-four-page-unreadable | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | Yes | Removed the sticky menu — see skill.md | Yes — the owner said so | Yes |\n",
-        "skill.md": "placeholder content for the cited fix\n"
-      },
-      "mtimes": {
-        "skill.md": "2026-11-24"
-      },
-      "run": ["python3", "{root}/checks/check_corrections.py", "{dir}/log.md", "--root={dir}", "--tier=block"],
-      "expect": "fail"
-    },
-    {
-      "id": "C4e",
-      "desc": "Step 4 corrections check: a row whose problem-id is not a slug must FAIL",
-      "files": {
-        "log.md": "# Corrections Log\n\n| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | Bad ID! | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | No |  | No | No |\n"
-      },
-      "run": ["python3", "{root}/checks/check_corrections.py", "{dir}/log.md", "--root={dir}", "--tier=block"],
-      "expect": "fail"
-    },
-    {
-      "id": "W5a",
-      "desc": "Step 5 watcher: one bad date must NOT silence the watcher — good rows still reported, bad row listed as WARN",
-      "files": {
-        "tasks.json": "[{\"title\": \"Pay invoice\", \"due\": \"2026-11-01\", \"owner\": \"\"}, {\"title\": \"Call client\", \"due\": \"tomorrow-ish\", \"owner\": \"Ana\"}]\n"
-      },
-      "run": ["python3", "{root}/skills/step-5-proactive-not-reactive/scripts/watcher_check.py", "{dir}/tasks.json", "--today", "2026-11-23"],
-      "expect": "contains_all",
-      "texts": ["OVERDUE", "WARN: some rows could not be read", "Pay invoice"]
-    },
-    {
-      "id": "W5b",
-      "desc": "Step 5 watcher: owner 'TBD' counts as no owner",
-      "files": {
-        "tasks.json": "[{\"title\": \"File the report\", \"due\": \"2026-11-25\", \"owner\": \"TBD\"}]\n"
-      },
-      "run": ["python3", "{root}/skills/step-5-proactive-not-reactive/scripts/watcher_check.py", "{dir}/tasks.json", "--today", "2026-11-23"],
-      "expect": "contains",
-      "text": "DUE IN THE NEXT 3 DAYS WITH NO OWNER"
-    },
-    {
-      "id": "W5c",
-      "desc": "Step 5 watcher: non-padded date '2026-2-3' must parse (lenient dates)",
-      "files": {
-        "tasks.json": "[{\"title\": \"Renew cert\", \"due\": \"2026-2-3\", \"owner\": \"Ana\"}]\n"
-      },
-      "run": ["python3", "{root}/skills/step-5-proactive-not-reactive/scripts/watcher_check.py", "{dir}/tasks.json", "--today", "2026-11-23"],
-      "expect": "contains",
-      "text": "OVERDUE"
-    },
-    {
-      "id": "W5d",
-      "desc": "Step 5 watcher: day-first date '23/11/2026' must parse",
-      "files": {
-        "tasks.json": "[{\"title\": \"Call client\", \"due\": \"23/11/2026\", \"owner\": \"Ana\"}]\n"
-      },
-      "run": ["python3", "{root}/skills/step-5-proactive-not-reactive/scripts/watcher_check.py", "{dir}/tasks.json", "--today", "2026-11-23"],
-      "expect": "contains",
-      "text": "No deadlines need you"
-    },
-    {
-      "id": "W5-good",
-      "desc": "Step 5 watcher: normal tasks with owners and future dates must report nothing",
-      "files": {
-        "tasks.json": "[{\"title\": \"Pay invoice\", \"due\": \"2026-12-15\", \"owner\": \"Ana\"}]\n"
-      },
-      "run": ["python3", "{root}/skills/step-5-proactive-not-reactive/scripts/watcher_check.py", "{dir}/tasks.json", "--today", "2026-11-23"],
-      "expect": "contains",
-      "text": "No deadlines need you"
-    },
-    {
-      "id": "W5-missing-due",
-      "desc": "Step 5 watcher: a task missing 'due' is a WARN row, not a whole-run failure",
-      "files": {
-        "tasks.json": "[{\"title\": \"No due date\"}]\n"
-      },
-      "run": ["python3", "{root}/skills/step-5-proactive-not-reactive/scripts/watcher_check.py", "{dir}/tasks.json", "--today", "2026-11-23"],
-      "expect": "warn"
-    },
-    {
-      "id": "L5a",
-      "desc": "Step 5 level5: action with a matching structured approval must PASS",
-      "files": {
-        "action.json": "{\"task-id\": \"weekly-watcher\", \"action-class\": \"update-wiki\", \"actor\": \"agent-1\", \"date\": \"2026-11-23\", \"scope\": \"update the wiki page\"}\n",
-        "approvals.yaml": "approvals:\n  - task-id: weekly-watcher\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2099-01-01\n  - task-id: self-task\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: agent-1\n    date: 2026-01-01\n    expires: 2099-01-01\n  - task-id: old-task\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2026-11-01\n"
-      },
-      "run": ["python3", "{root}/checks/check_level5.py", "{dir}/action.json", "--approvals={dir}/approvals.yaml"],
-      "expect": "pass"
-    },
-    {
-      "id": "L5b",
-      "desc": "Step 5 level5: action with no approval record must FAIL",
-      "files": {
-        "action.json": "{\"task-id\": \"other-task\", \"action-class\": \"update-wiki\", \"actor\": \"agent-1\", \"date\": \"2026-11-23\", \"scope\": \"update the wiki page\"}\n",
-        "approvals.yaml": "approvals:\n  - task-id: weekly-watcher\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2099-01-01\n"
-      },
-      "run": ["python3", "{root}/checks/check_level5.py", "{dir}/action.json", "--approvals={dir}/approvals.yaml"],
-      "expect": "fail"
-    },
-    {
-      "id": "L5c",
-      "desc": "Step 5 level5: an approval by the actor themself must FAIL (an agent cannot approve its own action)",
-      "files": {
-        "action.json": "{\"task-id\": \"self-task\", \"action-class\": \"update-wiki\", \"actor\": \"agent-1\", \"date\": \"2026-11-23\", \"scope\": \"update the wiki page\"}\n",
-        "approvals.yaml": "approvals:\n  - task-id: self-task\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: agent-1\n    date: 2026-01-01\n    expires: 2099-01-01\n"
-      },
-      "run": ["python3", "{root}/checks/check_level5.py", "{dir}/action.json", "--approvals={dir}/approvals.yaml"],
-      "expect": "fail"
-    },
-    {
-      "id": "L5d",
-      "desc": "Step 5 level5: an expired approval must FAIL",
-      "files": {
-        "action.json": "{\"task-id\": \"old-task\", \"action-class\": \"update-wiki\", \"actor\": \"agent-1\", \"date\": \"2026-11-23\", \"scope\": \"update the wiki page\"}\n",
-        "approvals.yaml": "approvals:\n  - task-id: old-task\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2026-11-01\n"
-      },
-      "run": ["python3", "{root}/checks/check_level5.py", "{dir}/action.json", "--approvals={dir}/approvals.yaml"],
-      "expect": "fail"
-    },
-    {
-      "id": "L5f",
-      "desc": "Step 5 level5: an action-class outside the fixed list must FAIL",
-      "files": {
-        "action.json": "{\"task-id\": \"weekly-watcher\", \"action-class\": \"launch-product\", \"actor\": \"agent-1\", \"date\": \"2026-11-23\", \"scope\": \"launch the product\"}\n",
-        "approvals.yaml": "approvals:\n  - task-id: weekly-watcher\n    action-class: launch-product\n    scope: launch the product\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2099-01-01\n"
-      },
-      "run": ["python3", "{root}/checks/check_level5.py", "{dir}/action.json", "--approvals={dir}/approvals.yaml"],
-      "expect": "fail"
-    },
-    {
-      "id": "R3a",
-      "desc": "Step 3 review: different sessions and a quoted passage must PASS",
-      "files": {
-        "review.md": "# Review of the Step 3 fix\n\n## What I checked\n> The evidence line says \"Ran pytest: 18 passed\" and the file exists.\n\n## Verdict\nNo issues found. The handoff shows real output.\n"
-      },
-      "run": ["python3", "{root}/checks/check_review.py", "{dir}/review.md", "--author-session=S1", "--reviewer-session=S2"],
-      "expect": "pass"
-    },
-    {
-      "id": "R3b",
-      "desc": "Step 3 review: reviewer session equal to author session must FAIL",
-      "files": {
-        "review.md": "# Review of the Step 3 fix\n\n## What I checked\n> The evidence line says \"Ran pytest: 18 passed\" and the file exists.\n\n## Verdict\nNo issues found. The handoff shows real output.\n"
-      },
-      "run": ["python3", "{root}/checks/check_review.py", "{dir}/review.md", "--author-session=S1", "--reviewer-session=S1"],
-      "expect": "fail"
-    },
-    {
-      "id": "R3c",
-      "desc": "Step 3 review: a review that quotes nothing must WARN (it may be a rubber stamp)",
-      "files": {
-        "review.md": "# Review of the Step 3 fix\n\n## Verdict\nLooks good to me. No issues found.\n"
-      },
-      "run": ["python3", "{root}/checks/check_review.py", "{dir}/review.md", "--author-session=S1", "--reviewer-session=S2"],
-      "expect": "warn"
-    },
-    {
-      "id": "T2-template",
-      "desc": "Step 2 prose scan: the template's own ban line ('Not anything that sends, pays, or publishes') still trips the scan as a WARN — the negator sits 4+ words before the verbs, past the 3-word window. Known residual: the prose scan is noisy, which is why it is WARN-only",
-      "run": ["python3", "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py", "{root}/templates/job-description-template.md"],
-      "expect": "warn"
-    },
-    {
-      "id": "Y1",
-      "desc": "YAML reader: a valid approvals file must parse",
-      "files": {
-        "approvals.yaml": "approvals:\n  - task-id: weekly-watcher\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2099-01-01\n"
-      },
-      "shell": "python3 -c 'import sys; sys.path.insert(0, \"{root}/checks\"); from gate_yaml import load_file; d = load_file(\"{dir}/approvals.yaml\"); print(len(d[\"approvals\"]))'",
-      "expect": "pass"
-    },
-    {
-      "id": "Y2",
-      "desc": "YAML reader: a file outside the supported subset must be refused, not guessed at",
-      "files": {
-        "bad.yaml": "overrides:\n  just some words\n"
-      },
-      "run": ["python3", "{root}/checks/_override_check.py", "--overrides", "{dir}/bad.yaml", "list"],
-      "expect": "fail"
-    }
-  ]
+ "cases": [
+  {
+   "id": "S1a",
+   "desc": "Step 1: nonsense prose containing all field words must FAIL (substring matching is not a check)",
+   "files": {
+    "input.md": "The greenhouse admission process follows footsteps. Role of the payroll team: mission unknown. The owner of the schedule is the tools committee. Green steps deliverable correction log.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py",
+    "{dir}/input.md"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "S1b",
+   "desc": "Step 1: filled brief with '[ ]' in an example must PASS (the ban is on empty fields, not on brackets in real text)",
+   "files": {
+    "input.md": "# Agent Job Description \u2014 Review responder\n\n## 1. Role\nReview responder for the business.\n\n## 2. Mission\nDraft replies to new reviews within one day.\n\n## 3. Owner\nThe business owner checks every draft and owns the outcome.\n\n## 4. Responsibilities\nDraft replies to new reviews, three times a week.\n\n## 5. Steps\n1. Read the review. 2. Draft a reply in the business voice. 3. Hand the draft to the owner.\n\n## 6. Deliverable\nA draft reply, with the owner's approval before anything goes out. Mark done items [ ] in the tracker before handing over.\n\n## 7. Sources of truth\nThe review itself and the business services page.\n\n## 8. Tools\nCan read reviews. Can never touch publishing or the live site.\n\n## 9. Green / amber / red\nGreen: drafting. Amber: anything public \u2014 owner approves first. Red: publishing.\n\n## 10. Schedule\nRuns Monday, Wednesday, Friday. Reports drafts to the owner the same day.\n\n## 11. Correction log\nLog location: docs/user/step-4-every-correction-becomes-the-system.md\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py",
+    "{dir}/input.md"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "S1c",
+   "desc": "Step 1: headings only, zero content, must FAIL",
+   "files": {
+    "input.md": "# Agent Job Description\n\n## 1. Role\n\n## 2. Mission\n\n## 3. Owner\n\n## 4. Responsibilities\n\n## 5. Steps\n\n## 6. Deliverable\n\n## 7. Sources of truth\n\n## 8. Tools\n\n## 9. Green / amber / red\n\n## 10. Schedule\n\n## 11. Correction log\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py",
+    "{dir}/input.md"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "S1d",
+   "desc": "Step 1: blank template must FAIL",
+   "run": [
+    "python3",
+    "{root}/skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py",
+    "{root}/templates/job-description-template.md"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "S1e",
+   "desc": "Step 1: filled fixture must PASS",
+   "files": {
+    "input.md": "# Agent Job Description \u2014 Review responder\n\n## 1. Role\nReview responder for the business.\n\n## 2. Mission\nDraft replies to new reviews within one day.\n\n## 3. Owner\nThe business owner checks every draft and owns the outcome.\n\n## 4. Responsibilities\nDraft replies to new reviews, three times a week.\n\n## 5. Steps\n1. Read the review. 2. Draft a reply in the business voice. 3. Hand the draft to the owner.\n\n## 6. Deliverable\nA draft reply, with the owner's approval before anything goes out.\n\n## 7. Sources of truth\nThe review itself and the business services page.\n\n## 8. Tools\nCan read reviews. Can never touch publishing or the live site.\n\n## 9. Green / amber / red\nGreen: drafting. Amber: anything public \u2014 owner approves first. Red: publishing.\n\n## 10. Schedule\nRuns Monday, Wednesday, Friday. Reports drafts to the owner the same day.\n\n## 11. Correction log\nLog location: docs/user/step-4-every-correction-becomes-the-system.md\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py",
+    "{dir}/input.md"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "S1f",
+   "desc": "Step 1: explicit 'N/A: <reason>' counts as filled",
+   "files": {
+    "input.md": "# Agent Job Description \u2014 Review responder\n\n## 1. Role\nReview responder for the business.\n\n## 2. Mission\nDraft replies to new reviews within one day.\n\n## 3. Owner\nThe business owner checks every draft and owns the outcome.\n\n## 4. Responsibilities\nDraft replies to new reviews, three times a week.\n\n## 5. Steps\n1. Read the review. 2. Draft a reply in the business voice. 3. Hand the draft to the owner.\n\n## 6. Deliverable\nA draft reply, with the owner's approval before anything goes out.\n\n## 7. Sources of truth\nThe review itself and the business services page.\n\n## 8. Tools\nCan read reviews. Can never touch publishing or the live site.\n\n## 9. Green / amber / red\nGreen: drafting. Amber: anything public \u2014 owner approves first. Red: publishing.\n\n## 10. Schedule\nN/A: one-off job, no schedule to keep.\n\n## 11. Correction log\nLog location: docs/user/step-4-every-correction-becomes-the-system.md\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-1-onboard-like-a-new-hire/scripts/check_job_description.py",
+    "{dir}/input.md"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "S2a",
+   "desc": "Step 2 prose scan: ordinary English ('Pay attention', 'Post a summary', 'Delete temp files') must be FLAGGED (warn)",
+   "files": {
+    "input.txt": "Pay attention to tone. Post a summary to the owner's private dashboard. Delete temporary working files when done.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py",
+    "{dir}/input.txt"
+   ],
+   "expect": "warn"
+  },
+  {
+   "id": "S2b",
+   "desc": "Step 2 prose scan: 'Never forget: the agent must send the weekly report' must be FLAGGED \u2014 'never' belongs to 'forget', not to 'send'",
+   "files": {
+    "input.txt": "Never forget: the agent must send the weekly report to clients.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py",
+    "{dir}/input.txt"
+   ],
+   "expect": "warn"
+  },
+  {
+   "id": "S2c",
+   "desc": "Step 2 prose scan: synonyms (email, push, remove, charge) are NOT caught by the prose scan \u2014 documented gap, the allowlist is the block",
+   "files": {
+    "input.txt": "The agent will email the client, push to main, remove the old file, and charge the card.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py",
+    "{dir}/input.txt"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "S2d",
+   "desc": "Step 2 prose scan: 'It is not the case that ... never send; it may send weekly digests' must be FLAGGED \u2014 the second sentence is an allowance",
+   "files": {
+    "input.txt": "It is not the case that the agent should never send; it may send weekly digests to clients.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py",
+    "{dir}/input.txt"
+   ],
+   "expect": "warn"
+  },
+  {
+   "id": "S2e",
+   "desc": "Step 2 prose scan: 'may send emails ... deploy to production' must be FLAGGED (control)",
+   "files": {
+    "input.txt": "the agent may send emails to clients and deploy to production\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py",
+    "{dir}/input.txt"
+   ],
+   "expect": "warn"
+  },
+  {
+   "id": "S2f",
+   "desc": "Step 2 prose scan: 'postpone' and 'sender' must NOT match 'post'/'send' (exact words only)",
+   "files": {
+    "input.txt": "Please postpone the launch and check the sender address.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py",
+    "{dir}/input.txt"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "S2g",
+   "desc": "Step 2 prose scan: ban in one sentence must not exempt an allowance in the next",
+   "files": {
+    "input.txt": "Do not send anything without approval. The agent may send the weekly report to clients.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py",
+    "{dir}/input.txt"
+   ],
+   "expect": "warn"
+  },
+  {
+   "id": "S2h",
+   "desc": "Step 2 prose scan: past-tense reports ('was deleted', 'was published') must NOT match",
+   "files": {
+    "input.txt": "The old file was deleted yesterday and the post was published last week.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py",
+    "{dir}/input.txt"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "S2i",
+   "desc": "Step 2 prose scan: 'deployment' must NOT match 'deploy'",
+   "files": {
+    "input.txt": "Read the deployment guide before the meeting.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py",
+    "{dir}/input.txt"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "A2a",
+   "desc": "Step 2 allowlist: 'Can change: send emails' with no approval record must FAIL",
+   "files": {
+    "job.md": "# Agent Job Description \u2014 Review responder\n\n## 1. Role\nReview responder for the business.\n\n## 8. Tools\nCan read: reviews.\nCan change: send emails to clients.\nCan never touch: the live site.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_tool_allowlist.py",
+    "{dir}/job.md"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "A2b",
+   "desc": "Step 2 allowlist: 'Can change: send emails' WITH an approval record must PASS",
+   "files": {
+    "review-responder.md": "# Agent Job Description \u2014 Review responder\n\n## 1. Role\nReview responder for the business.\n\n## 8. Tools\nCan read: reviews.\nCan change: send emails to clients.\nCan never touch: the live site.\n",
+    "approvals.yaml": "approvals:\n  - task-id: review-responder\n    action-class: report-only\n    scope: send emails to clients\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2099-01-01\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_tool_allowlist.py",
+    "{dir}/review-responder.md",
+    "--approvals={dir}/approvals.yaml"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "A2c",
+   "desc": "Step 2 allowlist: a high-risk tool in 'Can never touch:' is a ban, never a failure",
+   "files": {
+    "job.md": "# Agent Job Description \u2014 Review responder\n\n## 8. Tools\nCan read: reviews.\nCan change: read reviews.\nCan never touch: send, publish, deploy.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_tool_allowlist.py",
+    "{dir}/job.md"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "A2d",
+   "desc": "Step 2 allowlist: blank template must PASS (nothing is allowed)",
+   "run": [
+    "python3",
+    "{root}/checks/check_tool_allowlist.py",
+    "{root}/templates/job-description-template.md"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "A2e",
+   "desc": "Step 2 allowlist: synonyms in 'Can change:' (email, push, remove, charge) must FAIL \u2014 the prose scan cannot see them, the list can",
+   "files": {
+    "job.md": "# Agent Job Description \u2014 Review responder\n\n## 8. Tools\nCan read: reviews.\nCan change: email the client, push to main, remove the old file, charge the card.\nCan never touch: the live site.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_tool_allowlist.py",
+    "{dir}/job.md"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "S3a",
+   "desc": "Step 3 handoff: 'Evidence was not collected.' must FAIL (no machine-checkable evidence)",
+   "files": {
+    "input.md": "## Evidence\nEvidence was not collected.\n## Not checked\nDid not check the mobile layout.\nTries used: 1\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py",
+    "{dir}/input.md"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "S3b",
+   "desc": "Step 3 handoff: fluent fluff with no command, path, or number must FAIL",
+   "files": {
+    "input.md": "## Evidence\nI checked everything carefully and it all looks good to me.\n## Not checked\nNothing at all, really, I checked it all thoroughly.\nTries: 1\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py",
+    "{dir}/input.md"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "S3c",
+   "desc": "Step 3 handoff: 'Used 2 tries' must PASS (wider tries phrasings accepted)",
+   "files": {
+    "input.md": "## Evidence\nRan the full test suite: 42 passed, 0 failed.\n## Not checked\nThe Windows build \u2014 no Windows machine here.\nUsed 2 tries\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py",
+    "{dir}/input.md"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "S3d",
+   "desc": "Step 3 handoff: 'Tries \u2014 1' (em dash) must PASS",
+   "files": {
+    "input.md": "## Evidence\nRan pytest: 18 passed.\n## Not checked\nDid not check the PDF export.\nTries \u2014 1\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py",
+    "{dir}/input.md"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "S3e",
+   "desc": "Step 3 handoff: 'Tries: 5 last time, but this time tries: 1' must PASS (last mention wins)",
+   "files": {
+    "input.md": "## Evidence\nRan pytest: 18 passed.\n## Not checked\nDid not check the PDF export.\nTries: 5 last time, but this time tries: 1\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py",
+    "{dir}/input.md"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "S3f",
+   "desc": "Step 3 handoff: fabricated numbers PASS the script but must be labelled reviewer-checked (genuineness is not script-checkable)",
+   "files": {
+    "input.md": "## Evidence\nRan the full test suite: 214 passed, 0 failed, exit 0. Screenshot reviewed.\n## Not checked\nDid not check the PDF export.\nTries: 1\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py",
+    "{dir}/input.md"
+   ],
+   "expect": "contains",
+   "text": "reviewer-checked"
+  },
+  {
+   "id": "V-a",
+   "desc": "Step 3 handoff: 'Not checked: nothing' as a line under a heading must FAIL (label stripped before judging)",
+   "files": {
+    "input.md": "## Evidence\nRan check_tools.py on the template: PASS, exit 0.\n## Not checked\nNot checked: nothing\nTries used: 1\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py",
+    "{dir}/input.md"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "V-b",
+   "desc": "Step 3 handoff: vacuous 'Evidence:' line must FAIL even when a substantive line from the next section follows it",
+   "files": {
+    "input.md": "## Evidence\nEvidence: The evidence is that it worked.\nNot checked: did not test the PDF export\nTries used: 1\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py",
+    "{dir}/input.md"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "H-good-1",
+   "desc": "Step 3 handoff: good handoff (headings style) must PASS",
+   "files": {
+    "input.md": "## Evidence\nRan check_tools.py on the template: PASS, exit 0. Ran watcher_check.py on one overdue task: OVERDUE listed it.\n## Not checked\nGitHub rendering \u2014 nothing has been pushed yet, so it could not be checked.\nTries used: 1\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py",
+    "{dir}/input.md"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "H-good-2",
+   "desc": "Step 3 handoff: good handoff (inline style) must PASS",
+   "files": {
+    "input.md": "Evidence: Ran the full test suite: 42 passed, 0 failed.\nNot checked: the Windows build \u2014 no Windows machine here.\nTries: 2\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py",
+    "{dir}/input.md"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "H-good-3",
+   "desc": "Step 3 handoff: good handoff (multi-line evidence) must PASS",
+   "files": {
+    "input.md": "## Evidence\nRan pytest: 18 passed.\nAlso ran the linter: 0 errors.\n## Not checked\nDid not check the mobile layout.\nTries: 1\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-3-never-take-first-look/scripts/verify_handoff.py",
+    "{dir}/input.md"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "RCa",
+   "desc": "Step 3 run_checks: package.json whose description contains 'test' but has no test script must FAIL (zero checks ran although code checks apply)",
+   "files": {
+    "package.json": "{\"description\": \"test suite for the project\"}\n"
+   },
+   "run": [
+    "bash",
+    "{root}/skills/step-3-never-take-first-look/scripts/run_checks.sh",
+    "{dir}"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "RCb",
+   "desc": "Step 3 run_checks: a test script that is just 'true' must WARN (no test count in the output), not PASS",
+   "files": {
+    "package.json": "{\"scripts\": {\"test\": \"true\"}}\n"
+   },
+   "run": [
+    "bash",
+    "{root}/skills/step-3-never-take-first-look/scripts/run_checks.sh",
+    "{dir}"
+   ],
+   "expect": "warn"
+  },
+  {
+   "id": "RC-good",
+   "desc": "Step 3 run_checks: build/lint/typecheck plus a test that prints a count must PASS",
+   "files": {
+    "package.json": "{\"scripts\": {\"build\": \"true\", \"lint\": \"true\", \"typecheck\": \"true\", \"test\": \"echo '3 passed, 0 failed'\"}}\n"
+   },
+   "run": [
+    "bash",
+    "{root}/skills/step-3-never-take-first-look/scripts/run_checks.sh",
+    "{dir}"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "RC-docs",
+   "desc": "Step 3 run_checks: a docs-only directory (no package.json, no pyproject.toml) must PASS with a note, not fail",
+   "files": {},
+   "run": [
+    "bash",
+    "{root}/skills/step-3-never-take-first-look/scripts/run_checks.sh",
+    "{dir}"
+   ],
+   "expect": "contains",
+   "text": "no code checks apply"
+  },
+  {
+   "id": "RC-noscripts",
+   "desc": "Step 3 run_checks: a package.json with no scripts at all must FAIL (code checks apply, none ran)",
+   "files": {
+    "package.json": "{}\n"
+   },
+   "run": [
+    "bash",
+    "{root}/skills/step-3-never-take-first-look/scripts/run_checks.sh",
+    "{dir}"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "L4a",
+   "desc": "Step 4 log: three different problems ('video timing', 'video captions', 'video') must NOT count as one pattern",
+   "shell": "LOG={dir}/log.md; printf '| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\\n|---|---|---|---|---|---|---|---|---|\\n' > $LOG; python3 {root}/skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py --system video --task timing --problem-id video-timing-mismatch --expected x --actual y --log $LOG > /dev/null; python3 {root}/skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py --system video --task captions --problem-id video-captions-mismatch --expected x --actual y --log $LOG > /dev/null; python3 {root}/skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py --system video --task timing --problem-id video --expected x --actual y --log $LOG",
+   "expect": "contains",
+   "text": "No pattern yet"
+  },
+  {
+   "id": "L4b",
+   "desc": "Step 4 log: the same problem-id twice must print PATTERN",
+   "shell": "LOG={dir}/log.md; printf '| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\\n|---|---|---|---|---|---|---|---|---|\\n' > $LOG; python3 {root}/skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py --system video --task timing --problem-id video-timing-mismatch --expected x --actual y --log $LOG > /dev/null; python3 {root}/skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py --system video --task timing --problem-id video-timing-mismatch --expected x --actual y --log $LOG",
+   "expect": "contains",
+   "text": "PATTERN"
+  },
+  {
+   "id": "L4c",
+   "desc": "Step 4 log: a problem-id that is not a slug must be refused",
+   "files": {
+    "log.md": "# Log\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-4-every-correction-becomes-the-system/scripts/log_correction.py",
+    "--system",
+    "video",
+    "--task",
+    "timing",
+    "--problem-id",
+    "Video Timing!",
+    "--expected",
+    "x",
+    "--actual",
+    "y",
+    "--log",
+    "{dir}/log.md"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "C4a",
+   "desc": "Step 4 corrections check: a pattern row with a real fix file changed after the log date and a dated approval must PASS",
+   "files": {
+    "log.md": "# Corrections Log\n\n| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | step-four-page-unreadable | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | Yes | Removed the sticky menu \u2014 see skill.md | Yes \u2014 Ian, 2026-11-23 | Yes |\n",
+    "skill.md": "placeholder content for the cited fix\n"
+   },
+   "mtimes": {
+    "skill.md": "2026-11-24"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_corrections.py",
+    "{dir}/log.md",
+    "--root={dir}",
+    "--tier=block"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "C4b",
+   "desc": "Step 4 corrections check: a pattern row whose fix names a file that does not exist must FAIL",
+   "files": {
+    "log.md": "# Corrections Log\n\n| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | step-four-page-unreadable | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | Yes | Removed the sticky menu \u2014 see nonexistent.md | Yes \u2014 Ian, 2026-11-23 | Yes |\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_corrections.py",
+    "{dir}/log.md",
+    "--root={dir}",
+    "--tier=block"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "C4c",
+   "desc": "Step 4 corrections check: a pattern row with no fix proposed must FAIL",
+   "files": {
+    "log.md": "# Corrections Log\n\n| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | step-four-page-unreadable | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | Yes |  | Yes \u2014 Ian, 2026-11-23 | Yes |\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_corrections.py",
+    "{dir}/log.md",
+    "--root={dir}",
+    "--tier=block"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "C4d",
+   "desc": "Step 4 corrections check: a pattern row whose approval is prose ('the owner said so') with no date must FAIL",
+   "files": {
+    "log.md": "# Corrections Log\n\n| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | step-four-page-unreadable | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | Yes | Removed the sticky menu \u2014 see skill.md | Yes \u2014 the owner said so | Yes |\n",
+    "skill.md": "placeholder content for the cited fix\n"
+   },
+   "mtimes": {
+    "skill.md": "2026-11-24"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_corrections.py",
+    "{dir}/log.md",
+    "--root={dir}",
+    "--tier=block"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "C4e",
+   "desc": "Step 4 corrections check: a row whose problem-id is not a slug must FAIL",
+   "files": {
+    "log.md": "# Corrections Log\n\n| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | Bad ID! | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | No |  | No | No |\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_corrections.py",
+    "{dir}/log.md",
+    "--root={dir}",
+    "--tier=block"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "C4f",
+   "desc": "Step 4 corrections check: a pattern row whose fix file changed on the SAME day as the log date must PASS",
+   "files": {
+    "log.md": "# Corrections Log\n\n| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | step-four-page-unreadable | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | Yes | Removed the sticky menu \u2014 see skill.md | Yes \u2014 Ian, 2026-11-23 | Yes |\n",
+    "skill.md": "placeholder content for the cited fix\n"
+   },
+   "mtimes": {
+    "skill.md": "2026-11-20"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_corrections.py",
+    "{dir}/log.md",
+    "--root={dir}",
+    "--tier=block"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "C4g",
+   "desc": "Step 4 corrections check: a repeated header row from a second table in the same file is not a data row and must PASS",
+   "files": {
+    "log.md": "# Corrections Log\n\n## Format\n\n| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n\n## Worked examples\n\n| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | step-four-page-unreadable | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | Yes | Removed the sticky menu \u2014 see skill.md | Yes \u2014 Ian, 2026-11-23 | Yes |\n",
+    "skill.md": "placeholder content for the cited fix\n"
+   },
+   "mtimes": {
+    "skill.md": "2026-11-24"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_corrections.py",
+    "{dir}/log.md",
+    "--root={dir}",
+    "--tier=block"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "C4h",
+   "desc": "Step 4 corrections check: a Pattern? cell reading 'Yes \u2014 ...' (prose after Yes) is a pattern row and must PASS when its fix file changed after the log date",
+   "files": {
+    "log.md": "| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | step-four-page-unreadable | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | Yes \u2014 the same gap happened in earlier work | Removed the sticky menu \u2014 see skill.md | Yes \u2014 Ian, 2026-11-23 | Yes |\n",
+    "skill.md": "placeholder content for the cited fix\n"
+   },
+   "mtimes": {
+    "skill.md": "2026-11-24"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_corrections.py",
+    "{dir}/log.md",
+    "--root={dir}",
+    "--tier=block"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "C4i",
+   "desc": "Step 4 corrections check: a 'Yes \u2014 ...' pattern row must FAIL when its fix file did not change on or after the log date",
+   "files": {
+    "log.md": "| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | step-four-page-unreadable | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | Yes \u2014 the same gap happened in earlier work | Removed the sticky menu \u2014 see skill.md | Yes \u2014 Ian, 2026-11-23 | Yes |\n",
+    "skill.md": "placeholder content for the cited fix\n"
+   },
+   "mtimes": {
+    "skill.md": "2026-11-19"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_corrections.py",
+    "{dir}/log.md",
+    "--root={dir}",
+    "--tier=block"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "C4j",
+   "desc": "Step 4 corrections check: an unrecognized Pattern? value must WARN naming the value, not silently skip the row",
+   "files": {
+    "log.md": "| Date | Problem ID | System | Task | Expected vs actual | Severity | Pattern? | Fix proposed | Owner approved? | Tested? |\n|---|---|---|---|---|---|---|---|---|---|\n| 2026-11-20 | step-four-page-unreadable | Step Four web page | Read the page | Expected: readable. Actual: clipped. | high | Maybe \u2014 not sure yet | Removed the sticky menu \u2014 see skill.md | Yes \u2014 Ian, 2026-11-23 | Yes |\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_corrections.py",
+    "{dir}/log.md",
+    "--root={dir}",
+    "--tier=block"
+   ],
+   "expect": "warn"
+  },
+  {
+   "id": "W5a",
+   "desc": "Step 5 watcher: one bad date must NOT silence the watcher \u2014 good rows still reported, bad row listed as WARN",
+   "files": {
+    "tasks.json": "[{\"title\": \"Pay invoice\", \"due\": \"2026-11-01\", \"owner\": \"\"}, {\"title\": \"Call client\", \"due\": \"tomorrow-ish\", \"owner\": \"Ana\"}]\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-5-proactive-not-reactive/scripts/watcher_check.py",
+    "{dir}/tasks.json",
+    "--today",
+    "2026-11-23"
+   ],
+   "expect": "contains_all",
+   "texts": [
+    "OVERDUE",
+    "WARN: some rows could not be read",
+    "Pay invoice"
+   ]
+  },
+  {
+   "id": "W5b",
+   "desc": "Step 5 watcher: owner 'TBD' counts as no owner",
+   "files": {
+    "tasks.json": "[{\"title\": \"File the report\", \"due\": \"2026-11-25\", \"owner\": \"TBD\"}]\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-5-proactive-not-reactive/scripts/watcher_check.py",
+    "{dir}/tasks.json",
+    "--today",
+    "2026-11-23"
+   ],
+   "expect": "contains",
+   "text": "DUE IN THE NEXT 3 DAYS WITH NO OWNER"
+  },
+  {
+   "id": "W5c",
+   "desc": "Step 5 watcher: non-padded date '2026-2-3' must parse (lenient dates)",
+   "files": {
+    "tasks.json": "[{\"title\": \"Renew cert\", \"due\": \"2026-2-3\", \"owner\": \"Ana\"}]\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-5-proactive-not-reactive/scripts/watcher_check.py",
+    "{dir}/tasks.json",
+    "--today",
+    "2026-11-23"
+   ],
+   "expect": "contains",
+   "text": "OVERDUE"
+  },
+  {
+   "id": "W5d",
+   "desc": "Step 5 watcher: day-first date '23/11/2026' must parse",
+   "files": {
+    "tasks.json": "[{\"title\": \"Call client\", \"due\": \"23/11/2026\", \"owner\": \"Ana\"}]\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-5-proactive-not-reactive/scripts/watcher_check.py",
+    "{dir}/tasks.json",
+    "--today",
+    "2026-11-23"
+   ],
+   "expect": "contains",
+   "text": "No deadlines need you"
+  },
+  {
+   "id": "W5-good",
+   "desc": "Step 5 watcher: normal tasks with owners and future dates must report nothing",
+   "files": {
+    "tasks.json": "[{\"title\": \"Pay invoice\", \"due\": \"2026-12-15\", \"owner\": \"Ana\"}]\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-5-proactive-not-reactive/scripts/watcher_check.py",
+    "{dir}/tasks.json",
+    "--today",
+    "2026-11-23"
+   ],
+   "expect": "contains",
+   "text": "No deadlines need you"
+  },
+  {
+   "id": "W5-missing-due",
+   "desc": "Step 5 watcher: a task missing 'due' is a WARN row, not a whole-run failure",
+   "files": {
+    "tasks.json": "[{\"title\": \"No due date\"}]\n"
+   },
+   "run": [
+    "python3",
+    "{root}/skills/step-5-proactive-not-reactive/scripts/watcher_check.py",
+    "{dir}/tasks.json",
+    "--today",
+    "2026-11-23"
+   ],
+   "expect": "warn"
+  },
+  {
+   "id": "L5a",
+   "desc": "Step 5 level5: action with a matching structured approval must PASS",
+   "files": {
+    "action.json": "{\"task-id\": \"weekly-watcher\", \"action-class\": \"update-wiki\", \"actor\": \"agent-1\", \"date\": \"2026-11-23\", \"scope\": \"update the wiki page\"}\n",
+    "approvals.yaml": "approvals:\n  - task-id: weekly-watcher\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2099-01-01\n  - task-id: self-task\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: agent-1\n    date: 2026-01-01\n    expires: 2099-01-01\n  - task-id: old-task\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2026-11-01\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_level5.py",
+    "{dir}/action.json",
+    "--approvals={dir}/approvals.yaml"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "L5b",
+   "desc": "Step 5 level5: action with no approval record must FAIL",
+   "files": {
+    "action.json": "{\"task-id\": \"other-task\", \"action-class\": \"update-wiki\", \"actor\": \"agent-1\", \"date\": \"2026-11-23\", \"scope\": \"update the wiki page\"}\n",
+    "approvals.yaml": "approvals:\n  - task-id: weekly-watcher\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2099-01-01\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_level5.py",
+    "{dir}/action.json",
+    "--approvals={dir}/approvals.yaml"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "L5c",
+   "desc": "Step 5 level5: an approval by the actor themself must FAIL (an agent cannot approve its own action)",
+   "files": {
+    "action.json": "{\"task-id\": \"self-task\", \"action-class\": \"update-wiki\", \"actor\": \"agent-1\", \"date\": \"2026-11-23\", \"scope\": \"update the wiki page\"}\n",
+    "approvals.yaml": "approvals:\n  - task-id: self-task\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: agent-1\n    date: 2026-01-01\n    expires: 2099-01-01\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_level5.py",
+    "{dir}/action.json",
+    "--approvals={dir}/approvals.yaml"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "L5d",
+   "desc": "Step 5 level5: an expired approval must FAIL",
+   "files": {
+    "action.json": "{\"task-id\": \"old-task\", \"action-class\": \"update-wiki\", \"actor\": \"agent-1\", \"date\": \"2026-11-23\", \"scope\": \"update the wiki page\"}\n",
+    "approvals.yaml": "approvals:\n  - task-id: old-task\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2026-11-01\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_level5.py",
+    "{dir}/action.json",
+    "--approvals={dir}/approvals.yaml"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "L5e",
+   "desc": "Step 5 level5: an action that does MORE than the approval covers must FAIL (approval for the wiki page does not cover wiki page AND docs)",
+   "files": {
+    "action.json": "{\"task-id\": \"weekly-watcher\", \"action-class\": \"update-wiki\", \"actor\": \"agent-1\", \"date\": \"2026-11-23\", \"scope\": \"update the wiki page and the docs\"}\n",
+    "approvals.yaml": "approvals:\n  - task-id: weekly-watcher\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2099-01-01\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_level5.py",
+    "{dir}/action.json",
+    "--approvals={dir}/approvals.yaml"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "L5f",
+   "desc": "Step 5 level5: an action-class outside the fixed list must FAIL",
+   "files": {
+    "action.json": "{\"task-id\": \"weekly-watcher\", \"action-class\": \"launch-product\", \"actor\": \"agent-1\", \"date\": \"2026-11-23\", \"scope\": \"launch the product\"}\n",
+    "approvals.yaml": "approvals:\n  - task-id: weekly-watcher\n    action-class: launch-product\n    scope: launch the product\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2099-01-01\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_level5.py",
+    "{dir}/action.json",
+    "--approvals={dir}/approvals.yaml"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "R3a",
+   "desc": "Step 3 review: different sessions and a quoted passage must PASS",
+   "files": {
+    "review.md": "# Review of the Step 3 fix\n\n## What I checked\n> The evidence line says \"Ran pytest: 18 passed\" and the file exists.\n\n## Verdict\nNo issues found. The handoff shows real output.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_review.py",
+    "{dir}/review.md",
+    "--author-session=S1",
+    "--reviewer-session=S2"
+   ],
+   "expect": "pass"
+  },
+  {
+   "id": "R3b",
+   "desc": "Step 3 review: reviewer session equal to author session must FAIL",
+   "files": {
+    "review.md": "# Review of the Step 3 fix\n\n## What I checked\n> The evidence line says \"Ran pytest: 18 passed\" and the file exists.\n\n## Verdict\nNo issues found. The handoff shows real output.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_review.py",
+    "{dir}/review.md",
+    "--author-session=S1",
+    "--reviewer-session=S1"
+   ],
+   "expect": "fail"
+  },
+  {
+   "id": "R3c",
+   "desc": "Step 3 review: a review that quotes nothing must WARN (it may be a rubber stamp)",
+   "files": {
+    "review.md": "# Review of the Step 3 fix\n\n## Verdict\nLooks good to me. No issues found.\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/check_review.py",
+    "{dir}/review.md",
+    "--author-session=S1",
+    "--reviewer-session=S2"
+   ],
+   "expect": "warn"
+  },
+  {
+   "id": "T2-template",
+   "desc": "Step 2 prose scan: the template's own ban line ('Not anything that sends, pays, or publishes') still trips the scan as a WARN \u2014 the negator sits 4+ words before the verbs, past the 3-word window. Known residual: the prose scan is noisy, which is why it is WARN-only",
+   "run": [
+    "python3",
+    "{root}/skills/step-2-match-oversight-to-stakes/scripts/check_tools.py",
+    "{root}/templates/job-description-template.md"
+   ],
+   "expect": "warn"
+  },
+  {
+   "id": "Y1",
+   "desc": "YAML reader: a valid approvals file must parse",
+   "files": {
+    "approvals.yaml": "approvals:\n  - task-id: weekly-watcher\n    action-class: update-wiki\n    scope: update the wiki page\n    approved-by: Ian\n    date: 2026-01-01\n    expires: 2099-01-01\n"
+   },
+   "shell": "python3 -c 'import sys; sys.path.insert(0, \"{root}/checks\"); from gate_yaml import load_file; d = load_file(\"{dir}/approvals.yaml\"); print(len(d[\"approvals\"]))'",
+   "expect": "pass"
+  },
+  {
+   "id": "Y2",
+   "desc": "YAML reader: a file outside the supported subset must be refused, not guessed at",
+   "files": {
+    "bad.yaml": "overrides:\n  just some words\n"
+   },
+   "run": [
+    "python3",
+    "{root}/checks/_override_check.py",
+    "--overrides",
+    "{dir}/bad.yaml",
+    "list"
+   ],
+   "expect": "fail"
+  }
+ ]
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run the negative test corpus for the gate's checkers.
 
-Usage: python3 checks/tests/run_corpus.py [--root DIR]
+Usage: python3 checks/tests/run_corpus.py [--root=DIR]
 Reads checks/tests/corpus.json. For each case it writes the case's
 input files into checks/tests/.tmp/<id>/ (fresh each run), runs the
 command, and compares the outcome to the case's expectation:
