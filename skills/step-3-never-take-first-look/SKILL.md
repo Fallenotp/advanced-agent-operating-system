@@ -40,7 +40,7 @@ Pick the checker by output type. Full detail is in `references/checkers.md`.
 
 ### Visual — website, deck, card, PDF
 
-Screenshot every page/slide, read every word, spelling, contrast, positioning, cut-off/overlap. Click every button and link. Phone size as well as computer size. Max 3 passes. Hand over with a checked list. A screenshot you did not read is not a verified screen.
+Screenshot every page/slide, read every word, spelling, contrast, positioning, cut-off/overlap. Click every button and link. Phone size as well as computer size. Max 3 passes. Hand over with a checked list. A screenshot you did not read is not a verified screen. Render every image to pixels and look at it as a picture. Reading the image file's source — SVG or XML — is not a visual check. A picture you only read as code is not a verified picture.
 
 ### Code — app, script, website code
 
