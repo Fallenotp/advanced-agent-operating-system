@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="190" viewBox="0 0 1000 190" role="img" aria-label="The five steps, in order: 1. Onboard it like a new hire, write the job first. 2. Match the oversight to the stakes, limit what it can touch. 3. Never take the first look, check its work before you see it. 4. Every correction becomes the system, log it and rewrite the skill. 5. Make it proactive, only for boring recurring problems. Each step depends on the one before it.">
+  <g font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" text-anchor="middle">
+    <g>
+      <rect x="20" y="30" width="168" height="110" rx="10" fill="none" stroke="#111111" stroke-width="2"/>
+      <text x="104" y="62" font-size="15" font-weight="700" fill="#111111">1. ONBOARD</text>
+      <text x="104" y="92" font-size="14" fill="#555555">Write the job</text>
+      <text x="104" y="114" font-size="14" fill="#555555">first.</text>
+    </g>
+    <text x="196" y="92" font-size="22" fill="#111111">→</text>
+    <g>
+      <rect x="216" y="30" width="168" height="110" rx="10" fill="none" stroke="#111111" stroke-width="2"/>
+      <text x="300" y="62" font-size="15" font-weight="700" fill="#111111">2. OVERSIGHT</text>
+      <text x="300" y="92" font-size="14" fill="#555555">Limit what it</text>
+      <text x="300" y="114" font-size="14" fill="#555555">can touch.</text>
+    </g>
+    <text x="392" y="92" font-size="22" fill="#111111">→</text>
+    <g>
+      <rect x="412" y="30" width="168" height="110" rx="10" fill="none" stroke="#111111" stroke-width="2"/>
+      <text x="496" y="62" font-size="15" font-weight="700" fill="#111111">3. CHECK</text>
+      <text x="496" y="92" font-size="14" fill="#555555">Check its work</text>
+      <text x="496" y="114" font-size="14" fill="#555555">before you see it.</text>
+    </g>
+    <text x="588" y="92" font-size="22" fill="#111111">→</text>
+    <g>
+      <rect x="608" y="30" width="168" height="110" rx="10" fill="none" stroke="#111111" stroke-width="2"/>
+      <text x="692" y="62" font-size="15" font-weight="700" fill="#111111">4. CORRECT</text>
+      <text x="692" y="92" font-size="14" fill="#555555">Log it, rewrite</text>
+      <text x="692" y="114" font-size="14" fill="#555555">the skill.</text>
+    </g>
+    <text x="784" y="92" font-size="22" fill="#111111">→</text>
+    <g>
+      <rect x="804" y="30" width="168" height="110" rx="10" fill="none" stroke="#111111" stroke-width="2"/>
+      <text x="888" y="62" font-size="15" font-weight="700" fill="#111111">5. PROACT</text>
+      <text x="888" y="92" font-size="14" fill="#555555">Only boring,</text>
+      <text x="888" y="114" font-size="14" fill="#555555">recurring jobs.</text>
+    </g>
+    <text x="500" y="172" font-size="16" fill="#555555">Use them in order. Skipping ahead is what breaks things.</text>
+  </g>
+</svg>
