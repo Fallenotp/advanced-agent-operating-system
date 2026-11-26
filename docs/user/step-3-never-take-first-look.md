@@ -7,7 +7,7 @@ The agent must check its own work before you see it. First drafts land roughly 7
 Before anything is handed over:
 
 1. Run the check for this type of work and show what it said — the real output, screenshot, total, or source, not a summary.
-2. Fix what failed, biggest first, and run the check again. At most 3 tries. If it still fails, stop and tell the owner what is left, with the evidence.
+2. Fix what failed, biggest first, and run the check again. At most 3 tries. If it still fails, mark the affected job BLOCKED and report the remaining faults and evidence to the orchestrator.
 3. Say what you did NOT check, and why.
 4. Never change the check to make it pass. If you think the check is wrong, say so and let the owner change it.
 5. For anything a customer, client, or the public will see, or anything that moves money or data: a different agent — a fresh session that did not make the work — checks it first, and it may say "no issues".
@@ -36,7 +36,7 @@ The full checkers are below.
 5. Click every button and every link. Fill in every form the way a real person would. Screenshot what happens after each click. If a button does nothing, or goes to the wrong place, that is a fail.
 6. Check on a phone-sized screen as well as a computer screen.
 7. Fix what you found — biggest problem first — then look again from step 1. At most 3 times.
-8. If it still is not right after 3 tries, stop and tell the owner what is left, with the screenshots. Do not keep fixing in circles.
+8. If it still is not right after 3 tries, mark the affected job BLOCKED and send the remaining faults and screenshots to the orchestrator. Do not keep fixing in circles.
 9. When you hand it over, say what you checked, in one short list: pages/slides checked, buttons clicked, problems found and fixed, and anything you could not check. A screenshot you did not read is not a check.
 
 For a deck, check every slide for five things: cut-off text or faces, low contrast, overlapping elements, empty areas that look unfinished, and text too small to read.

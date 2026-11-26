@@ -11,7 +11,7 @@ Pick the checker by output type. The blanket rule in `../SKILL.md` is the gate; 
 5. Click every button and every link. Fill in every form the way a real person would. Screenshot what happens after each click. If a button does nothing, or goes to the wrong place, that is a fail.
 6. Check on a phone-sized screen as well as a computer screen.
 7. Fix what you found — biggest problem first — then look again from step 1. At most 3 times.
-8. If it still is not right after 3 tries, stop and tell the owner what is left, with the screenshots. Do not keep fixing in circles.
+8. If it still is not right after 3 tries, mark the affected job BLOCKED and send the remaining faults and screenshots to the orchestrator. Do not keep fixing in circles.
 9. When you hand it over, say what you checked, in one short list: pages/slides checked, buttons clicked, problems found and fixed, and anything you could not check. A screenshot you did not read is not a check.
 
 For a deck, check every slide for five things: cut-off text or faces, low contrast, overlapping elements, empty areas that look unfinished, and text too small to read.

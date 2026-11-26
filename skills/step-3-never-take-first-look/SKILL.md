@@ -23,7 +23,7 @@ The owner's first look should never be the agent's first output. First drafts la
 **Never say done without evidence. Before you hand anything over:**
 
 1. Run the check for this type of work (below) and show what it said — the real output, screenshot, total, or source, not a summary.
-2. Fix what failed, biggest first, and run the check again. At most 3 tries. If it still fails, stop and tell the owner what is left, with the evidence.
+2. Fix what failed, biggest first, and run the check again. At most 3 tries. If it still fails, mark the affected job BLOCKED and report the remaining faults and evidence to the orchestrator.
 3. Say what you did NOT check, and why.
 4. Never change the check to make it pass. If you think the check is wrong, say so and let the owner change it.
 5. For anything a customer, client, or the public will see, or anything that moves money or data: a different agent — a fresh session that did not make the work — checks it first, and it may say "no issues".
